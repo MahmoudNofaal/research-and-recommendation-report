@@ -6,4 +6,21 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Folder Include="DTOs\AI\" />
+    <Folder Include="DTOs\Exports\" />
+    <Folder Include="DTOs\Reports\" />
+    <Folder Include="Features\Exports\ExportReport\" />
+    <Folder Include="Features\Presets\GetCriteriaPresets\" />
+    <Folder Include="Features\Presets\GetStyleSuggestions\" />
+    <Folder Include="Features\Reports\CreateReport\" />
+    <Folder Include="Features\Reports\GenerateReport\" />
+    <Folder Include="Features\Reports\GetReportDetails\" />
+    <Folder Include="Features\Reports\GetReportHistory\" />
+    <Folder Include="Features\Reports\DeleteReport\" />
+    <Folder Include="Features\Reports\RegenerateReport\" />
+    <Folder Include="Features\Reports\PreviewReport\" />
+    <Folder Include="Services\" />
+  </ItemGroup>
+
 </Project>

@@ -4,49 +4,256 @@
 
 Research Report Generator
 
-## Product Goal
+## Goal
 
-Build a professional ASP.NET Core application that allows users to generate intelligent research and recommendation reports. The app should feel practical enough for real users and impressive enough that other developers can see strong architecture, thoughtful AI integration, and product sense.
+Build a serious ASP.NET Core MVC application for generating intelligent research and recommendation reports. The application should feel practical, product-like, and impressive to engineers because it follows Clean Architecture correctly while still delivering real features:
 
-The application is not only a portfolio demo. It should look like the foundation of a real product.
+- User accounts
+- Guided report creation
+- AI report generation
+- Smart style and criteria suggestions
+- Report quality checks
+- Report history and search
+- Regeneration history
+- Preview
+- Markdown, HTML, PDF, and DOCX export
 
-## Architecture Philosophy
+## Clean Architecture Correction
 
-Use a multi-project ASP.NET Core MVC solution.
+The previous architecture plan was too loose about the Application layer.
 
-The app will still be simple to run as one web application, but the code will be separated into class libraries so the architecture is clear:
+The corrected rule is:
 
-- `Domain`: business entities, enums, and domain rules
-- `Application`: use cases, interfaces, DTOs, validation, orchestration
-- `Infrastructure`: SQL Server, EF Core, Identity, AI providers, exports, external services
-- `Web`: MVC controllers, Razor views, view models, UI, authentication pages
-- `Tests`: unit and integration tests
+- Application defines use cases, DTOs, validators, result types, pipeline behaviors, and ports.
+- Application may contain command/query handlers because those are use case implementations.
+- Application must not contain implementations for infrastructure-facing services such as AI providers, repositories, export renderers, document generators, HTTP clients, SQL Server access, Identity, file storage, or current HTTP user access.
+- Infrastructure implements Application ports when the implementation depends on external technology.
+- Web implements Presentation concerns and can implement web-specific adapters such as `CurrentUserService` because it depends on `HttpContext`.
+- Domain contains business rules and pure domain concepts only.
 
-This gives the project a serious enterprise .NET shape without forcing a separate API and Angular frontend.
+So the corrected shape is not:
 
-## High-Level Architecture
+```text
+Application/
+  Services/
+    IReportWorkflowService.cs
+    ReportWorkflowService.cs
+```
+
+The corrected shape is:
+
+```text
+Application/
+  Features/
+    Reports/
+      GenerateReport/
+        GenerateReportCommand.cs
+        GenerateReportCommandHandler.cs
+  Abstractions/
+    AI/
+      IAiProvider.cs
+
+Infrastructure/
+  AI/
+    GroqAiProvider.cs
+    GeminiAiProvider.cs
+```
+
+The handler lives in Application because it is the use case. The AI provider implementation lives in Infrastructure because it performs external I/O.
+
+## Architectural Style
+
+Use a Clean Architecture modular monolith:
+
+- One deployable ASP.NET Core MVC application.
+- Multiple class library projects.
+- Strict dependency direction.
+- Use cases in Application.
+- Adapters in Web and Infrastructure.
+
+## Layer Rules
+
+### Domain
+
+Domain is the innermost layer.
+
+Allowed:
+
+- Entities
+- Value objects
+- Aggregates
+- Domain events
+- Domain errors
+- Domain exceptions
+- Pure domain services
+- Business invariants
+
+Forbidden:
+
+- EF Core
+- ASP.NET Core
+- Identity
+- HttpClient
+- JSON attributes
+- SQL Server
+- AI SDKs
+- File system
+- Dependency injection
+- Application DTOs
+- View models
+
+### Application
+
+Application owns use cases.
+
+Allowed:
+
+- Commands
+- Queries
+- Command handlers
+- Query handlers
+- DTOs
+- Result types
+- Validators
+- Pipeline behaviors
+- Interfaces/ports required by use cases
+- Pure policies that have no external I/O
+
+Forbidden:
+
+- EF Core `DbContext`
+- SQL Server implementation
+- ASP.NET Core MVC types
+- Razor view models
+- Identity implementation
+- HttpClient
+- Groq/Gemini concrete clients
+- PDF/DOCX library implementation
+- File system implementation
+- Infrastructure project reference
+
+### Infrastructure
+
+Infrastructure implements technical adapters behind Application ports.
+
+Allowed:
+
+- EF Core
+- SQL Server
+- ASP.NET Core Identity persistence
+- Repository implementations
+- AI provider implementations
+- Export implementations
+- External HTTP calls
+- Document-generation libraries
+- Logging sinks
+- Seed data
+- Migrations
+
+Forbidden:
+
+- Business rules
+- Razor views
+- MVC controllers
+- UI decisions
+- Direct calls into Web
+
+### Web
+
+Web is the Presentation layer and composition root.
+
+Allowed:
+
+- Controllers
+- Razor views
+- View models
+- Request/response mapping
+- HTTP status selection
+- Authentication UI
+- MVC filters
+- Middleware
+- Static files
+- DI composition root
+- Web-specific adapter implementations such as current user from `HttpContext`
+
+Forbidden:
+
+- Business rules
+- EF Core queries in controllers
+- Direct AI provider calls in controllers
+- Returning Domain entities directly to views
+- Serializing EF Core entities or Domain aggregates directly
+
+## Dependency Rules
+
+Allowed project references:
+
+```text
+Domain
+  References: none
+
+Application
+  References:
+    Domain
+
+Infrastructure
+  References:
+    Application
+    Domain
+
+Web
+  References:
+    Application
+    Infrastructure
+
+UnitTests
+  References:
+    Domain
+    Application
+
+IntegrationTests
+  References:
+    Web
+    Application
+    Infrastructure
+```
+
+Forbidden project references:
+
+```text
+Domain -> Application
+Domain -> Infrastructure
+Domain -> Web
+Application -> Infrastructure
+Application -> Web
+Infrastructure -> Web
+```
+
+## High-Level Diagram
 
 ```mermaid
 flowchart TD
-    User["User"]
-    Web["Web Project\nASP.NET Core MVC + Razor Views"]
-    App["Application Project\nUse Cases + Interfaces"]
-    Domain["Domain Project\nEntities + Enums + Rules"]
-    Infra["Infrastructure Project\nEF Core + Identity + AI + Export"]
+    Browser["Browser"]
+    Web["Web\nMVC Controllers + Razor Views"]
+    App["Application\nCommands, Queries, Handlers, Ports"]
+    Domain["Domain\nEntities, Value Objects, Rules"]
+    Infra["Infrastructure\nEF Core, SQL Server, AI, Exports"]
     Sql["SQL Server"]
     Ai["Groq / Gemini"]
-    Files["Generated Downloads\nMD / HTML / PDF / DOCX"]
+    Docs["MD / HTML / PDF / DOCX"]
 
-    User --> Web
+    Browser --> Web
     Web --> App
     App --> Domain
-    App --> Infra
+    Infra --> App
+    Infra --> Domain
+    Web --> Infra
     Infra --> Sql
     Infra --> Ai
-    Infra --> Files
-    Files --> Web
-    Web --> User
+    Infra --> Docs
 ```
+
+Important: `Web -> Infrastructure` exists only for DI composition and startup wiring. Controllers should talk to Application use cases, not Infrastructure classes.
 
 ## Solution Structure
 
@@ -74,67 +281,92 @@ research-and-recommendation-report/
 
       Common/
         Entity.cs
+        AggregateRoot.cs
         AuditableEntity.cs
-        IHasUserOwnership.cs
+        IDomainEvent.cs
 
-      Entities/
-        ReportRequest.cs
-        ReportTopic.cs
-        ReportCriterion.cs
-        GeneratedReport.cs
-        ReportSection.cs
-        ReportRecommendation.cs
-        ReportCitation.cs
-        ReportExport.cs
-        ReportGenerationRun.cs
-        ReportTemplate.cs
-        ReportStylePreset.cs
-        CriteriaPreset.cs
-        UserSavedReport.cs
-
-      Enums/
-        AiProviderType.cs
-        ExportFormat.cs
-        GenerationStage.cs
-        RecommendationStrength.cs
-        ReportLength.cs
-        ReportStatus.cs
-        ReportStyle.cs
-        ReportVisibility.cs
-        TechnicalDepth.cs
-
-      ValueObjects/
-        ReportInputOptions.cs
-        ReportQualityScore.cs
-        TokenUsage.cs
-
-      Exceptions/
-        DomainException.cs
-        ReportOwnershipException.cs
-        UnsupportedExportFormatException.cs
+      Reports/
+        Entities/
+          ReportRequest.cs
+          ReportTopic.cs
+          ReportCriterion.cs
+          GeneratedReport.cs
+          ReportGenerationRun.cs
+          ReportCitation.cs
+          ReportRecommendation.cs
+          ReportTemplate.cs
+          CriteriaPreset.cs
+          ReportStylePreset.cs
+        ValueObjects/
+          ReportRequestId.cs
+          GeneratedReportId.cs
+          ReportTopicName.cs
+          ReportTitle.cs
+          ReportQualityScore.cs
+          TokenUsage.cs
+        Enums/
+          AiProviderType.cs
+          ExportFormat.cs
+          GenerationStatus.cs
+          RecommendationStrength.cs
+          ReportLength.cs
+          ReportStatus.cs
+          ReportStyle.cs
+          ReportVisibility.cs
+          TechnicalDepth.cs
+        Events/
+          ReportRequestedDomainEvent.cs
+          ReportGeneratedDomainEvent.cs
+          ReportGenerationFailedDomainEvent.cs
+          ReportExportedDomainEvent.cs
+        Errors/
+          ReportDomainError.cs
+        Exceptions/
+          ReportDomainException.cs
 
     ResearchReportGenerator.Application/
       ResearchReportGenerator.Application.csproj
+
+      Common/
+        Behaviors/
+          AuthorizationBehavior.cs
+          ValidationBehavior.cs
+          LoggingBehavior.cs
+          PerformanceBehavior.cs
+          UnhandledExceptionBehavior.cs
+        Errors/
+          ApplicationError.cs
+          ReportApplicationErrors.cs
+        Interfaces/
+          ICommand.cs
+          ICommandHandler.cs
+          IQuery.cs
+          IQueryHandler.cs
+        Models/
+          PagedResult.cs
+          Result.cs
+          ResultOfT.cs
 
       Abstractions/
         AI/
           IAiProvider.cs
           IAiProviderFactory.cs
-          IAiPromptBuilder.cs
+          IAiPromptComposer.cs
           IAiResponseParser.cs
         Auth/
           ICurrentUserService.cs
         Data/
           IApplicationDbContext.cs
           IUnitOfWork.cs
-        Exports/
-          IReportExportService.cs
-          IReportExportCoordinator.cs
         Reports/
-          IReportWorkflowService.cs
-          IReportQualityService.cs
-          IReportTemplateService.cs
-          IReportSearchService.cs
+          IReportReadRepository.cs
+          IReportWriteRepository.cs
+          IReportTemplateReader.cs
+          ICriteriaPresetReader.cs
+          IReportStylePresetReader.cs
+        Exports/
+          IReportExportRenderer.cs
+          IReportExportCoordinator.cs
         Time/
           IDateTimeProvider.cs
 
@@ -142,52 +374,63 @@ research-and-recommendation-report/
         AI/
           AiGenerationRequest.cs
           AiGenerationResult.cs
-          AiProviderHealthResult.cs
-        Exports/
-          ExportReportRequest.cs
-          ExportReportResult.cs
+          AiProviderHealthDto.cs
         Reports/
-          CreateReportRequestDto.cs
-          CreateReportResultDto.cs
-          GenerateReportCommand.cs
-          GeneratedReportDto.cs
-          ReportCriterionDto.cs
-          ReportDetailsDto.cs
-          ReportHistoryItemDto.cs
-          ReportPreviewDto.cs
-          ReportRegenerationRequestDto.cs
           ReportTopicDto.cs
-          SourceCitationDto.cs
+          ReportCriterionDto.cs
+          ReportInputOptionsDto.cs
+          GeneratedReportDto.cs
+          ReportPreviewDto.cs
+          ReportHistoryItemDto.cs
+          ReportDetailsDto.cs
+          ReportGenerationRunDto.cs
+          ReportQualityWarningDto.cs
+        Exports/
+          ExportReportDto.cs
+          ExportReportResultDto.cs
+        Presets/
+          CriteriaPresetDto.cs
+          ReportStylePresetDto.cs
 
       Features/
         Reports/
-          CreateReport/
-            CreateReportCommand.cs
-            CreateReportCommandHandler.cs
-            CreateReportValidator.cs
+          CreateReportRequest/
+            CreateReportRequestCommand.cs
+            CreateReportRequestCommandHandler.cs
+            CreateReportRequestCommandValidator.cs
+            CreateReportRequestResult.cs
           GenerateReport/
             GenerateReportCommand.cs
             GenerateReportCommandHandler.cs
-            GenerateReportValidator.cs
+            GenerateReportCommandValidator.cs
+            GenerateReportResult.cs
+          RegenerateReport/
+            RegenerateReportCommand.cs
+            RegenerateReportCommandHandler.cs
+            RegenerateReportCommandValidator.cs
+            RegenerateReportResult.cs
+          GetReportPreview/
+            GetReportPreviewQuery.cs
+            GetReportPreviewQueryHandler.cs
+            GetReportPreviewResult.cs
           GetReportDetails/
             GetReportDetailsQuery.cs
             GetReportDetailsQueryHandler.cs
           GetReportHistory/
             GetReportHistoryQuery.cs
             GetReportHistoryQueryHandler.cs
-          PreviewReport/
-            PreviewReportQuery.cs
-            PreviewReportQueryHandler.cs
-          RegenerateReport/
-            RegenerateReportCommand.cs
-            RegenerateReportCommandHandler.cs
           DeleteReport/
             DeleteReportCommand.cs
             DeleteReportCommandHandler.cs
+            DeleteReportCommandValidator.cs
+          SearchReports/
+            SearchReportsQuery.cs
+            SearchReportsQueryHandler.cs
         Exports/
           ExportReport/
             ExportReportCommand.cs
             ExportReportCommandHandler.cs
+            ExportReportCommandValidator.cs
         Presets/
           GetCriteriaPresets/
             GetCriteriaPresetsQuery.cs
@@ -195,21 +438,17 @@ research-and-recommendation-report/
           GetStyleSuggestions/
             GetStyleSuggestionsQuery.cs
             GetStyleSuggestionsQueryHandler.cs
+        Dashboard/
+          GetDashboard/
+            GetDashboardQuery.cs
+            GetDashboardQueryHandler.cs
 
-      Mapping/
-        ReportMappingProfile.cs
-
-      Options/
-        AiOptions.cs
-        ExportOptions.cs
-        ReportGenerationOptions.cs
-
-      Services/
-        ReportWorkflowService.cs
-        ReportQualityService.cs
-        ReportTemplateService.cs
-        ReportSearchService.cs
-        StyleSuggestionService.cs
+      Policies/
+        ReportPromptComposer.cs
+        ReportQualityPolicy.cs
+        StyleSuggestionPolicy.cs
+        CriteriaSuggestionPolicy.cs
+        ReportTitleSuggestionPolicy.cs
 
       DependencyInjection.cs
 
@@ -218,79 +457,90 @@ research-and-recommendation-report/
 
       AI/
         Common/
-          AiHttpClient.cs
           AiProviderFactory.cs
-          AiProviderFailureHandler.cs
-          AiPromptBuilder.cs
           AiResponseParser.cs
-          PromptTemplateLoader.cs
+          AiHttpClient.cs
+          AiProviderFailureClassifier.cs
         Groq/
           GroqAiProvider.cs
           GroqOptions.cs
-          GroqRequest.cs
-          GroqResponse.cs
+          GroqChatCompletionRequest.cs
+          GroqChatCompletionResponse.cs
         Gemini/
           GeminiAiProvider.cs
           GeminiOptions.cs
-          GeminiRequest.cs
-          GeminiResponse.cs
+          GeminiGenerateContentRequest.cs
+          GeminiGenerateContentResponse.cs
         Fake/
           FakeAiProvider.cs
 
       Data/
         ApplicationDbContext.cs
         ApplicationDbContextFactory.cs
+        UnitOfWork.cs
         Configurations/
           ReportRequestConfiguration.cs
           ReportTopicConfiguration.cs
           ReportCriterionConfiguration.cs
           GeneratedReportConfiguration.cs
-          ReportSectionConfiguration.cs
-          ReportRecommendationConfiguration.cs
-          ReportCitationConfiguration.cs
-          ReportExportConfiguration.cs
           ReportGenerationRunConfiguration.cs
+          ReportCitationConfiguration.cs
+          ReportRecommendationConfiguration.cs
           ReportTemplateConfiguration.cs
-          ReportStylePresetConfiguration.cs
           CriteriaPresetConfiguration.cs
+          ReportStylePresetConfiguration.cs
         Identity/
           ApplicationUser.cs
           ApplicationRole.cs
           IdentitySeeder.cs
+        Interceptors/
+          AuditableEntitySaveChangesInterceptor.cs
+          SoftDeleteSaveChangesInterceptor.cs
         Migrations/
         Seed/
           CriteriaPresetSeeder.cs
           ReportStylePresetSeeder.cs
           ReportTemplateSeeder.cs
 
+      Reports/
+        Repositories/
+          EfReportReadRepository.cs
+          EfReportWriteRepository.cs
+          EfReportTemplateReader.cs
+          EfCriteriaPresetReader.cs
+          EfReportStylePresetReader.cs
+
       Exports/
         Common/
           ExportFileNameBuilder.cs
           MarkdownPipelineFactory.cs
-          ReportHtmlTemplateBuilder.cs
+          HtmlDocumentTemplate.cs
           ReportExportCoordinator.cs
         Markdown/
-          MarkdownExportService.cs
+          MarkdownReportExportRenderer.cs
         Html/
-          HtmlExportService.cs
+          HtmlReportExportRenderer.cs
         Pdf/
-          PdfExportService.cs
+          PdfReportExportRenderer.cs
           PdfOptions.cs
         Docx/
-          DocxExportService.cs
+          DocxReportExportRenderer.cs
           DocxDocumentBuilder.cs
 
-      Persistence/
-        UnitOfWork.cs
-
-      Services/
-        CurrentUserService.cs
+      Time/
         DateTimeProvider.cs
 
       DependencyInjection.cs
 
     ResearchReportGenerator.Web/
       ResearchReportGenerator.Web.csproj
+
+      Controllers/
+        HomeController.cs
+        DashboardController.cs
+        ReportsController.cs
+        ExportsController.cs
+        PresetsController.cs
 
       Areas/
         Identity/
@@ -301,48 +551,58 @@ research-and-recommendation-report/
               Register.cshtml
               Register.cshtml.cs
               Logout.cshtml
-              Logout.cshtml.cs
               Manage/
                 Index.cshtml
                 Index.cshtml.cs
 
-      Controllers/
-        HomeController.cs
-        ReportsController.cs
-        ExportsController.cs
-        PresetsController.cs
-        SettingsController.cs
+      Adapters/
+        CurrentUserService.cs
 
       Filters/
-        ValidateReportOwnershipFilter.cs
+        MapApplicationResultFilter.cs
+        ValidateAntiForgeryFilter.cs
 
       Middleware/
         ExceptionHandlingMiddleware.cs
+        RequestCorrelationMiddleware.cs
 
-      Models/
-        ErrorViewModel.cs
+      Mapping/
+        DashboardViewModelMapper.cs
+        ReportViewModelMapper.cs
+        ExportViewModelMapper.cs
+        ProblemDetailsMapper.cs
 
       ViewModels/
         Dashboard/
           DashboardViewModel.cs
+          RecentReportViewModel.cs
+          ProviderStatusViewModel.cs
         Reports/
           CreateReportViewModel.cs
-          CriteriaInputViewModel.cs
           TopicInputViewModel.cs
-          ReportDetailsViewModel.cs
+          CriteriaInputViewModel.cs
           ReportHistoryViewModel.cs
           ReportHistoryItemViewModel.cs
+          ReportDetailsViewModel.cs
           ReportPreviewViewModel.cs
           RegenerateReportViewModel.cs
+          DeleteReportViewModel.cs
         Exports/
-          ExportOptionsViewModel.cs
+          ExportButtonsViewModel.cs
+          ExportDownloadErrorViewModel.cs
+        Presets/
+          CriteriaPresetViewModel.cs
+          StyleSuggestionViewModel.cs
         Shared/
           SelectOptionViewModel.cs
+          ErrorViewModel.cs
 
       Views/
         Home/
           Index.cshtml
           Privacy.cshtml
+        Dashboard/
+          Index.cshtml
         Reports/
           Index.cshtml
           Create.cshtml
@@ -352,8 +612,6 @@ research-and-recommendation-report/
           Delete.cshtml
         Exports/
           DownloadError.cshtml
-        Settings/
-          Index.cshtml
         Shared/
           _Layout.cshtml
           _ValidationScriptsPartial.cshtml
@@ -365,44 +623,70 @@ research-and-recommendation-report/
             QualityScoreBadge.cshtml
             CriteriaChips.cshtml
             CitationList.cshtml
+            GenerationMetadata.cshtml
 
       wwwroot/
         css/
           site.css
+          report-form.css
           report-preview.css
         js/
           create-report.js
           report-preview.js
-        lib/
+          preset-suggestions.js
 
+      Program.cs
       appsettings.json
       appsettings.Development.json
-      Program.cs
 
   tests/
-    ResearchReportGenerator.UnitTests/
-      ResearchReportGenerator.UnitTests.csproj
-      Application/
-        ReportPromptBuilderTests.cs
-        ReportQualityServiceTests.cs
-        StyleSuggestionServiceTests.cs
-        ReportWorkflowServiceTests.cs
-      Domain/
+    ResearchReportGenerator.ArchitectureTests/
+      ResearchReportGenerator.ArchitectureTests.csproj
+      DependencyRuleTests.cs
+      LayerDependencyTests.cs
+      NamingConventionTests.cs
+
+    ResearchReportGenerator.DomainTests/
+      ResearchReportGenerator.DomainTests.csproj
+      Reports/
         ReportRequestTests.cs
+        GeneratedReportTests.cs
+        ReportQualityScoreTests.cs
+
+    ResearchReportGenerator.ApplicationTests/
+      ResearchReportGenerator.ApplicationTests.csproj
+      Features/
+        CreateReportRequestCommandHandlerTests.cs
+        GenerateReportCommandHandlerTests.cs
+        ExportReportCommandHandlerTests.cs
+      Policies/
+        ReportPromptComposerTests.cs
+        ReportQualityPolicyTests.cs
+        StyleSuggestionPolicyTests.cs
+
+    ResearchReportGenerator.InfrastructureTests/
+      ResearchReportGenerator.InfrastructureTests.csproj
+      AI/
+        FakeAiProviderTests.cs
+        AiResponseParserTests.cs
       Exports/
-        MarkdownExportServiceTests.cs
-        HtmlExportServiceTests.cs
+        MarkdownReportExportRendererTests.cs
+        HtmlReportExportRendererTests.cs
+        DocxReportExportRendererTests.cs
+      Data/
+        ReportRepositoryTests.cs
 
     ResearchReportGenerator.IntegrationTests/
       ResearchReportGenerator.IntegrationTests.csproj
       TestWebApplicationFactory.cs
+      Auth/
+        AuthenticationFlowTests.cs
       Reports/
         ReportCreationFlowTests.cs
         ReportOwnershipTests.cs
+        ReportHistoryTests.cs
       Exports/
-        ReportExportTests.cs
-      Auth/
-        AuthenticationFlowTests.cs
+        ReportExportFlowTests.cs
 
   scripts/
     setup-dev-db.ps1
@@ -410,461 +694,347 @@ research-and-recommendation-report/
     update-database.ps1
 ```
 
-## Project References
-
-```text
-ResearchReportGenerator.Domain
-  No project references
-
-ResearchReportGenerator.Application
-  References:
-    ResearchReportGenerator.Domain
-
-ResearchReportGenerator.Infrastructure
-  References:
-    ResearchReportGenerator.Application
-    ResearchReportGenerator.Domain
+## What Each Layer Owns
 
-ResearchReportGenerator.Web
-  References:
-    ResearchReportGenerator.Application
-    ResearchReportGenerator.Infrastructure
+### Domain Owns
 
-ResearchReportGenerator.UnitTests
-  References:
-    ResearchReportGenerator.Application
-    ResearchReportGenerator.Domain
-    ResearchReportGenerator.Infrastructure
+`ReportRequest`
 
-ResearchReportGenerator.IntegrationTests
-  References:
-    ResearchReportGenerator.Web
-    ResearchReportGenerator.Application
-    ResearchReportGenerator.Infrastructure
-```
-
-## Main Features
-
-### 1. Authentication and User Ownership
-
-Users can:
-
-- Register
-- Log in
-- Log out
-- Manage basic profile information
-- See only their own reports
-- Generate reports under their own account
-- Reopen previous reports
-
-Important rule:
-
-Every report-related query must include the current user's ID.
-
-### 2. Dashboard
-
-The dashboard should show:
-
-- Total reports generated by the user
-- Recent reports
-- Draft or failed report requests
-- Quick button to create a new report
-- Most used report styles
-- Export shortcuts for recent reports
-- AI provider status indicator
-
-This makes the app feel like a real product instead of a single-form demo.
-
-### 3. Guided Report Creation Wizard
-
-The create report screen should feel guided, not like a boring long form.
+- Ensures report request has a title.
+- Ensures at least two topics.
+- Ensures valid criteria list.
+- Tracks status changes.
+- Raises domain events.
 
-Steps:
+`GeneratedReport`
 
-1. Choose report goal
-2. Add topics to compare
-3. Choose audience and report style
-4. Choose technical depth
-5. Select comparison criteria
-6. Add optional constraints
-7. Review and generate
-
-Inputs:
-
-- Report title
-- Topics to compare
-- Target audience
-- Report style
-- Technical depth
-- Report length
-- Preferred criteria
-- Industry or domain
-- Current technology stack
-- Performance needs
-- Security needs
-- Budget considerations
-- Must include notes
-- Must avoid notes
-- Preferred AI provider
-
-### 4. Smart Suggestions
-
-The app should suggest useful options instead of forcing the user to think from nothing.
-
-Suggested features:
-
-- Suggest report style based on selected goal
-- Suggest comparison criteria based on topic category
-- Suggest technical depth based on audience
-- Suggest report title from topics
-- Suggest missing criteria such as cost, security, scalability, maintainability, integration, learning curve, support, and vendor maturity
+- Holds canonical Markdown content.
+- Tracks generation status.
+- Owns quality score value object.
+- Guards invalid state transitions.
 
-These suggestions can start as rule-based logic, then later become AI-assisted.
+`ReportGenerationRun`
 
-### 5. AI Report Generation
+- Records a generation attempt.
+- Tracks provider, model, token usage, duration, success or failure.
 
-The AI generation pipeline should:
+`CriteriaPreset` and `ReportStylePreset`
 
-- Build a structured prompt from user input
-- Select the configured AI provider
-- Generate Markdown as the canonical report content
-- Parse and validate the output
-- Save the generated report
-- Store generation metadata
-- Handle failures clearly
+- Represent built-in product vocabulary.
+- Do not know how they are stored.
 
-The generated report should include:
+### Application Owns
 
-1. Executive Summary
-2. Problem Context
-3. Topic Explanations
-4. Relationship Between Topics
-5. Comparison Criteria
-6. Comparison Table
-7. Decision Matrix
-8. Recommended Choice by Scenario
-9. Risks and Tradeoffs
-10. Implementation Notes
-11. Small Code or Configuration Examples if useful
-12. Final Recommendation
-13. References or Source Notes
+Use cases:
 
-### 6. Report Quality Score
+- Create report request
+- Generate report
+- Regenerate report
+- Preview report
+- Search report history
+- Delete report
+- Export report
+- Get criteria presets
+- Get style suggestions
+- Get dashboard
 
-To make the app more impressive, add a lightweight quality check after AI generation.
+Ports:
 
-Checks:
+- `IAiProvider`
+- `IAiProviderFactory`
+- `IReportReadRepository`
+- `IReportWriteRepository`
+- `IReportExportRenderer`
+- `IReportExportCoordinator`
+- `ICurrentUserService`
+- `IDateTimeProvider`
+- `IUnitOfWork`
 
-- Required sections exist
-- All topics are mentioned
-- Recommendation section exists
-- Comparison table exists
-- Report has enough depth for selected level
-- Markdown is valid enough to render
-- Report is not too short
-- Report does not include obvious placeholder text
+Pure policies:
 
-Store:
+- `ReportPromptComposer`
+- `ReportQualityPolicy`
+- `StyleSuggestionPolicy`
+- `CriteriaSuggestionPolicy`
+- `ReportTitleSuggestionPolicy`
 
-- `OverallScore`
-- `CompletenessScore`
-- `ClarityScore`
-- `RecommendationScore`
-- `Warnings`
+These are allowed in Application only because they do not talk to databases, files, HTTP, AI APIs, or framework-specific services.
 
-This feature shows that the app does not blindly trust AI output.
+### Infrastructure Owns
 
-### 7. Report Preview
+Implementations:
 
-Users can preview the generated report in the browser.
+- `GroqAiProvider : IAiProvider`
+- `GeminiAiProvider : IAiProvider`
+- `FakeAiProvider : IAiProvider`
+- `EfReportReadRepository : IReportReadRepository`
+- `EfReportWriteRepository : IReportWriteRepository`
+- `ReportExportCoordinator : IReportExportCoordinator`
+- `MarkdownReportExportRenderer : IReportExportRenderer`
+- `HtmlReportExportRenderer : IReportExportRenderer`
+- `PdfReportExportRenderer : IReportExportRenderer`
+- `DocxReportExportRenderer : IReportExportRenderer`
+- `DateTimeProvider : IDateTimeProvider`
 
-Preview page should include:
+### Web Owns
 
-- Rendered Markdown
-- Report metadata
-- Topics
-- Audience
-- Style
-- Depth
-- Quality score
-- AI provider used
-- Generation date
-- Export buttons
-- Regenerate button
-- Delete button
+Implementations:
 
-### 8. Report History and Search
+- `CurrentUserService : ICurrentUserService`
 
-Users can:
+Reason:
 
-- View all generated reports
-- Search by title or topic
-- Filter by status
-- Filter by style
-- Filter by date
-- Open report preview
-- Download directly
-- Delete old reports
-
-### 9. Regeneration
-
-Users can regenerate a report when:
-
-- AI output is not good enough
-- They want a different depth
-- They want a different style
-- They want another provider to try
-
-The app should keep a `ReportGenerationRun` record for each generation attempt.
-
-This lets the project show traceability and AI workflow maturity.
-
-### 10. Export System
-
-Supported formats:
-
-- Markdown
-- HTML
-- PDF
-- DOCX
-
-Export architecture:
-
-- Markdown is stored as the source of truth.
-- HTML is rendered from Markdown.
-- PDF is generated from HTML or a dedicated document renderer.
-- DOCX is generated from Markdown sections.
-
-Each export should produce a clean filename:
-
-```text
-report-title_2026-07-13.pdf
-```
-
-### 11. Criteria Presets
-
-The app should include built-in comparison criteria presets.
-
-Examples:
-
-- Software Architecture
-- Cloud Services
-- Databases
-- AI Tools
-- Programming Frameworks
-- Enterprise Technology
-- Business Tools
-
-Each preset can include criteria such as:
-
-- Cost
-- Performance
-- Scalability
-- Security
-- Learning curve
-- Ecosystem maturity
-- Vendor support
-- Integration complexity
-- Maintainability
-- Operational effort
-- Time to market
-
-### 12. Report Style Presets
-
-Built-in styles:
-
-- Executive Decision Brief
-- Technical Engineering Analysis
-- Beginner-Friendly Explanation
-- Architecture Recommendation
-- Vendor or Tool Comparison
-- Academic Research Summary
-- Business Case Report
-
-The user can choose manually, but the app can suggest a likely style.
-
-### 13. AI Provider Settings
-
-No full admin dashboard is required in the first version, but the architecture should support provider configuration.
-
-Configuration sources:
-
-- `appsettings.json` for provider names and default models
-- user secrets or environment variables for API keys
-- database seed data for style and criteria presets
-
-The owner can manage advanced settings manually.
-
-### 14. Error and Retry Experience
-
-The app should handle:
-
-- Missing API key
-- Provider timeout
-- Provider rate limit
-- Empty AI response
-- Invalid report request
-- Export failure
-- Unauthorized access
-
-Users should see friendly messages, while developers can inspect logs.
-
-### 15. Audit and Transparency
-
-Store useful metadata:
-
-- AI provider
-- AI model
-- Prompt version
-- Generation duration
-- Token usage if available
-- Status
-- Error message
-- Quality warnings
-
-This makes the app feel serious and helps debugging.
+- It reads `HttpContext.User`, so it belongs to the web adapter layer, not Application.
 
 ## Complete User Flows
 
-### Flow 1: New Visitor Opens App
+### Flow 1: Visitor Opens App
 
-1. Visitor opens home page.
-2. App explains the value briefly.
-3. Visitor sees actions:
-   - Register
-   - Login
-4. Visitor registers.
-5. App redirects to dashboard.
+1. Visitor opens `/`.
+2. `HomeController.Index` returns landing page.
+3. Visitor sees product purpose and actions.
+4. Visitor chooses register or login.
+
+Layer path:
+
+```text
+Browser -> Web only
+```
 
 ### Flow 2: User Registers
 
 1. User opens register page.
-2. User enters email, password, and display name.
-3. App validates input.
-4. App creates user account.
-5. App signs user in.
-6. App redirects to dashboard.
+2. Web Identity UI accepts email, password, display name.
+3. ASP.NET Core Identity creates user.
+4. User is signed in.
+5. Web redirects to dashboard.
 
-### Flow 3: User Logs In
+Layer path:
 
-1. User opens login page.
-2. User enters credentials.
-3. App validates credentials.
-4. App redirects to dashboard.
+```text
+Web -> Infrastructure Identity persistence -> SQL Server
+```
 
-### Flow 4: User Creates a New Report
+### Flow 3: User Opens Dashboard
+
+1. User opens `/dashboard`.
+2. `DashboardController.Index` maps HTTP request to `GetDashboardQuery`.
+3. Query handler asks `IReportReadRepository` for user report summary.
+4. Infrastructure repository queries SQL Server.
+5. Application returns dashboard DTO.
+6. Web maps DTO to view model.
+7. Razor view renders dashboard.
+
+Layer path:
+
+```text
+Web -> Application query -> Infrastructure repository -> SQL Server
+```
+
+### Flow 4: User Starts Guided Report Creation
 
 1. User clicks `New Report`.
-2. App opens guided create form.
-3. User enters report title.
-4. User adds topics.
-5. User chooses audience.
-6. App suggests report style.
-7. User accepts or changes style.
-8. User chooses depth and length.
-9. App suggests criteria.
-10. User selects criteria and adds custom criteria if needed.
-11. User enters optional constraints.
-12. User chooses AI provider or uses default.
-13. User reviews input summary.
-14. User clicks `Generate Report`.
-15. App creates `ReportRequest`.
-16. App starts generation.
+2. `ReportsController.Create` loads criteria presets and style presets through Application queries.
+3. Web renders guided form.
 
-### Flow 5: AI Generation Succeeds
+Wizard steps:
 
-1. App builds prompt.
-2. App calls selected AI provider.
-3. Provider returns Markdown.
-4. App parses and validates result.
-5. App calculates quality score.
-6. App saves `GeneratedReport`.
-7. App saves `ReportGenerationRun`.
-8. User is redirected to preview page.
+1. Report goal and title
+2. Topics to compare
+3. Target audience
+4. Report style
+5. Technical depth and length
+6. Criteria
+7. Optional constraints
+8. Review and generate
 
-### Flow 6: AI Generation Fails
+### Flow 5: Style and Criteria Suggestions
 
-1. App builds prompt.
-2. App calls provider.
-3. Provider fails, times out, or returns invalid output.
-4. App stores failed `ReportGenerationRun`.
-5. App keeps the original `ReportRequest`.
-6. User sees friendly failure message.
-7. User can retry with same provider or another provider.
+1. User enters topics or category.
+2. Browser calls `PresetsController`.
+3. Controller sends `GetStyleSuggestionsQuery` or `GetCriteriaPresetsQuery`.
+4. Application uses pure suggestion policies and preset readers.
+5. Web returns JSON for UI suggestions.
 
-### Flow 7: User Previews Report
+Important:
+
+- Suggestions can be rule-based first.
+- AI-assisted suggestions can be added later through `IAiProvider`.
+
+### Flow 6: User Submits Report Request
+
+1. User submits create form.
+2. Web validates request shape.
+3. Web maps view model to `CreateReportRequestCommand`.
+4. Application validator checks use-case input.
+5. Handler creates `ReportRequest` domain entity.
+6. Domain validates invariants.
+7. Handler saves through `IReportWriteRepository`.
+8. Handler commits through `IUnitOfWork`.
+9. Web redirects to generation or preview route.
+
+No controller talks to EF Core.
+
+### Flow 7: AI Generation Succeeds
+
+1. Web sends `GenerateReportCommand`.
+2. Handler loads report request by user ID.
+3. Handler calls `ReportPromptComposer`.
+4. Handler calls `IAiProviderFactory`.
+5. Factory returns configured provider.
+6. Provider implementation in Infrastructure calls Groq or Gemini.
+7. Handler receives `AiGenerationResult`.
+8. Handler parses/validates generated Markdown through Application parser interface or pure parser.
+9. Handler calculates quality score through `ReportQualityPolicy`.
+10. Handler creates `GeneratedReport`.
+11. Handler stores `GeneratedReport` and `ReportGenerationRun`.
+12. Handler commits unit of work.
+13. Web redirects to preview.
+
+Layer path:
+
+```text
+Web -> Application handler -> Application port -> Infrastructure AI -> External AI
+Application handler -> Infrastructure repository -> SQL Server
+```
+
+### Flow 8: AI Generation Fails
+
+1. Provider times out, rate limits, or returns invalid content.
+2. Infrastructure provider returns failed `AiGenerationResult` for expected provider-level failures or throws for unexpected infrastructure failures.
+3. Handler stores failed `ReportGenerationRun`.
+4. Handler returns `Result.Failure`.
+5. Web maps Application error to friendly message.
+6. User can retry or switch provider.
+
+### Flow 9: User Previews Report
 
 1. User opens report preview.
-2. App verifies ownership.
-3. App loads generated report.
-4. App renders Markdown as HTML.
-5. App displays metadata and quality score.
-6. User can download, regenerate, or delete.
+2. Web sends `GetReportPreviewQuery`.
+3. Handler loads report using current user ID.
+4. Application returns `ReportPreviewDto`.
+5. Web maps DTO to `ReportPreviewViewModel`.
+6. View renders Markdown preview, metadata, quality score, warnings, citations, and export buttons.
 
-### Flow 8: User Downloads Report
+### Flow 10: User Downloads Export
 
-1. User clicks export format.
-2. App verifies report ownership.
-3. App loads Markdown content.
-4. Export coordinator chooses export service.
-5. Export service creates file bytes.
-6. App returns file download.
+1. User clicks Markdown, HTML, PDF, or DOCX.
+2. Web sends `ExportReportCommand`.
+3. Handler verifies report ownership through repository query.
+4. Handler calls `IReportExportCoordinator`.
+5. Infrastructure coordinator selects renderer.
+6. Renderer creates file bytes.
+7. Handler returns `ExportReportResultDto`.
+8. Web returns `File(...)` response.
 
-### Flow 9: User Views Report History
+No export renderer lives in Application.
+
+### Flow 11: User Searches Report History
 
 1. User opens report history.
-2. App loads reports owned by current user.
-3. User searches or filters.
-4. User opens a previous report.
+2. User searches by title, topic, date, status, style, or provider.
+3. Web sends `SearchReportsQuery`.
+4. Infrastructure read repository performs query.
+5. Application returns paged result.
+6. Web renders history list.
 
-### Flow 10: User Regenerates Report
+### Flow 12: User Regenerates Report
 
-1. User opens report preview.
+1. User opens preview.
 2. User clicks regenerate.
-3. User optionally changes provider, depth, style, or extra instructions.
-4. App creates new generation run.
-5. App generates new Markdown.
-6. App stores new generated version.
-7. User previews latest version.
+3. User optionally changes provider, style, depth, or extra notes.
+4. Web sends `RegenerateReportCommand`.
+5. Handler creates a new `ReportGenerationRun`.
+6. Handler generates a new `GeneratedReport` version.
+7. Previous generation remains in history.
+8. User previews latest generated version.
 
-### Flow 11: User Deletes Report
+### Flow 13: User Deletes Report
 
-1. User opens report details or history.
-2. User clicks delete.
-3. App asks for confirmation.
-4. App verifies ownership.
-5. App soft deletes report or marks it deleted.
-6. Report no longer appears in normal history.
+1. User clicks delete.
+2. Web shows confirmation.
+3. Web sends `DeleteReportCommand`.
+4. Handler verifies ownership.
+5. Domain marks report as deleted or repository applies soft delete.
+6. Report disappears from normal history.
 
-### Flow 12: Owner Updates Presets Manually
+### Flow 14: Developer Adds a New AI Provider
 
-1. Owner edits seed data or database rows.
-2. Owner adds criteria preset or style preset.
-3. App displays new preset in create report form.
+1. Add `NewProviderOptions` in Infrastructure.
+2. Add `NewProviderAiProvider : IAiProvider` in Infrastructure.
+3. Register provider in `Infrastructure.DependencyInjection`.
+4. Update provider factory.
+5. Application handlers do not change.
+6. Web controllers do not change.
 
-### Flow 13: Developer Adds a New AI Provider
+## Main Use Cases
 
-1. Developer creates provider class implementing `IAiProvider`.
-2. Developer adds options class.
-3. Developer registers provider in dependency injection.
-4. Developer updates provider factory.
-5. App can use new provider without changing report workflow.
+### CreateReportRequestCommandHandler
+
+Responsibilities:
+
+- Get current user ID through `ICurrentUserService`.
+- Create `ReportRequest` domain entity.
+- Validate domain invariants through domain methods.
+- Save through `IReportWriteRepository`.
+- Commit through `IUnitOfWork`.
+- Return `CreateReportRequestResult`.
+
+Does not:
+
+- Call AI provider.
+- Use EF Core.
+- Use `HttpContext`.
+
+### GenerateReportCommandHandler
+
+Responsibilities:
+
+- Load report request.
+- Verify ownership.
+- Compose prompt.
+- Call AI provider port.
+- Create generation run.
+- Create generated report.
+- Run quality policy.
+- Save and commit.
+
+Does not:
+
+- Know whether provider is Groq or Gemini.
+- Know SQL Server.
+- Know PDF/DOCX details.
+
+### ExportReportCommandHandler
+
+Responsibilities:
+
+- Verify ownership.
+- Load generated report.
+- Call export coordinator port.
+- Return export DTO.
+
+Does not:
+
+- Use Open XML SDK directly.
+- Use PDF library directly.
+- Use file system directly.
 
 ## Database Tables
 
-### Identity Tables
+Identity tables:
 
-Created by ASP.NET Core Identity:
+```text
+AspNetUsers
+AspNetRoles
+AspNetUserClaims
+AspNetUserLogins
+AspNetUserRoles
+AspNetUserTokens
+AspNetRoleClaims
+```
 
-- `AspNetUsers`
-- `AspNetRoles`
-- `AspNetUserClaims`
-- `AspNetUserLogins`
-- `AspNetUserRoles`
-- `AspNetUserTokens`
-- `AspNetRoleClaims`
-
-### Application Tables
+Application tables:
 
 ```text
 ReportRequests
@@ -920,21 +1090,23 @@ GeneratedReports
   UpdatedAtUtc
   DeletedAtUtc
 
-ReportSections
+ReportGenerationRuns
   Id
+  ReportRequestId
   GeneratedReportId
-  Heading
-  Content
-  SortOrder
-
-ReportRecommendations
-  Id
-  GeneratedReportId
-  Scenario
-  RecommendedOption
-  Reasoning
-  Strength
-  SortOrder
+  UserId
+  AiProvider
+  ModelName
+  PromptText
+  RawResponse
+  Status
+  ErrorCode
+  ErrorMessage
+  StartedAtUtc
+  CompletedAtUtc
+  DurationMs
+  InputTokens
+  OutputTokens
 
 ReportCitations
   Id
@@ -947,31 +1119,14 @@ ReportCitations
   Notes
   SortOrder
 
-ReportExports
+ReportRecommendations
   Id
   GeneratedReportId
-  UserId
-  ExportFormat
-  FileName
-  ContentType
-  CreatedAtUtc
-
-ReportGenerationRuns
-  Id
-  ReportRequestId
-  GeneratedReportId
-  UserId
-  AiProvider
-  ModelName
-  Prompt
-  RawResponse
-  Status
-  ErrorMessage
-  StartedAtUtc
-  CompletedAtUtc
-  DurationMs
-  InputTokens
-  OutputTokens
+  Scenario
+  RecommendedOption
+  Reasoning
+  Strength
+  SortOrder
 
 ReportTemplates
   Id
@@ -983,15 +1138,6 @@ ReportTemplates
   CreatedAtUtc
   UpdatedAtUtc
 
-ReportStylePresets
-  Id
-  Name
-  Description
-  RecommendedAudience
-  DefaultDepth
-  IsActive
-  SortOrder
-
 CriteriaPresets
   Id
   Name
@@ -1001,473 +1147,369 @@ CriteriaPresets
   IsActive
   SortOrder
 
-UserSavedReports
+ReportStylePresets
   Id
-  UserId
+  Name
+  Description
+  RecommendedAudience
+  DefaultDepth
+  IsActive
+  SortOrder
+
+ReportExports
+  Id
   GeneratedReportId
-  IsFavorite
-  Tags
-  Notes
+  UserId
+  ExportFormat
+  FileName
+  ContentType
   CreatedAtUtc
 ```
 
-## Important Classes and Responsibilities
+## AI Architecture
 
-### Controllers
-
-`HomeController`
-
-- Shows landing page.
-- Redirects authenticated users to dashboard.
-
-`ReportsController`
-
-- Shows dashboard/history.
-- Shows create report form.
-- Handles report request submission.
-- Shows report preview.
-- Handles regeneration and deletion.
-
-`ExportsController`
-
-- Handles report downloads.
-- Delegates export work to application services.
-
-`PresetsController`
-
-- Returns style and criteria suggestions.
-- Can be used by JavaScript on the create form.
-
-`SettingsController`
-
-- Shows basic user settings and provider status.
-
-### Application Services
-
-`ReportWorkflowService`
-
-- Main orchestration service.
-- Creates requests.
-- Calls AI provider.
-- Stores generated report.
-- Calculates quality score.
-
-`ReportPromptBuilder`
-
-- Converts structured user input into AI prompt.
-- Enforces report sections and output rules.
-
-`ReportQualityService`
-
-- Scores generated output.
-- Detects missing sections and weak output.
-
-`ReportTemplateService`
-
-- Loads default prompt templates.
-- Supports future template customization.
-
-`StyleSuggestionService`
-
-- Suggests report style and depth from audience/topic.
-
-`ReportSearchService`
-
-- Handles report history filtering and search.
-
-`ReportExportCoordinator`
-
-- Routes export requests to the right export service.
-
-### Infrastructure Services
-
-`GroqAiProvider`
-
-- Calls Groq API.
-
-`GeminiAiProvider`
-
-- Calls Gemini API.
-
-`FakeAiProvider`
-
-- Returns deterministic sample output for development and tests.
-
-`MarkdownExportService`
-
-- Returns Markdown file.
-
-`HtmlExportService`
-
-- Converts Markdown to HTML.
-
-`PdfExportService`
-
-- Converts report to PDF.
-
-`DocxExportService`
-
-- Converts report to Word document.
-
-`CurrentUserService`
-
-- Provides current user ID to application layer.
-
-`DateTimeProvider`
-
-- Provides testable UTC time.
-
-## AI Prompt Design
-
-The system prompt should define the assistant as a research analyst and recommendation architect.
-
-The user prompt should include:
-
-- Topics
-- Target audience
-- Report style
-- Depth
-- Criteria
-- Constraints
-- Required sections
-- Formatting rules
-- Citation rules
-- Code snippet limits
-
-Output format:
-
-- Markdown only
-- Clear headings
-- Tables where useful
-- No fake citations
-- No unsupported claims
-- Explicit recommendation by scenario
-
-## Export Design
-
-### Markdown
-
-Source:
-
-- `GeneratedReports.MarkdownContent`
-
-Output:
-
-- UTF-8 `.md` file
-
-### HTML
-
-Source:
-
-- Markdown converted using Markdig
-
-Output:
-
-- Complete HTML document with embedded print-friendly CSS
-
-### PDF
-
-Source:
-
-- HTML output
-
-Output:
-
-- Print-ready `.pdf`
-
-Implementation choice can be finalized during development depending on environment reliability.
-
-### DOCX
-
-Source:
-
-- Parsed Markdown sections
-
-Output:
-
-- `.docx` with title, headings, paragraphs, tables, and references
-
-Preferred library:
-
-- Open XML SDK
-
-## Security Requirements
-
-Required:
-
-- Authentication required for all report actions.
-- User can access only their own reports.
-- Anti-forgery validation for form posts.
-- Server-side validation for all inputs.
-- API keys stored in user secrets or environment variables.
-- No secrets committed to Git.
-- Avoid logging full prompts if they may contain sensitive user input, or make prompt logging configurable.
-- Soft delete for user reports to avoid accidental destructive deletion.
-
-Ownership query pattern:
+Application contract:
 
 ```csharp
-var report = await db.GeneratedReports
-    .FirstOrDefaultAsync(report =>
-        report.Id == reportId &&
-        report.UserId == currentUserId &&
-        report.DeletedAtUtc == null);
-```
-
-## Validation Rules
-
-Report request:
-
-- Title is required.
-- At least two topics are required.
-- Target audience is required.
-- Report style is required.
-- Technical depth is required.
-- At least three criteria are recommended.
-- Optional fields have maximum lengths.
-
-AI response:
-
-- Content is not empty.
-- Required headings exist.
-- All topics appear at least once.
-- Final recommendation exists.
-- Markdown does not contain obvious placeholders.
-
-## Configuration
-
-`appsettings.json`
-
-```json
+public interface IAiProvider
 {
-  "ConnectionStrings": {
-    "DefaultConnection": ""
-  },
-  "Ai": {
-    "DefaultProvider": "Groq",
-    "PromptVersion": "v1",
-    "Groq": {
-      "Model": "llama-3.1-8b-instant"
-    },
-    "Gemini": {
-      "Model": "gemini-1.5-flash"
-    }
-  },
-  "Exports": {
-    "DefaultFileNamePrefix": "research-report"
-  }
+    AiProviderType ProviderType { get; }
+
+    Task<AiGenerationResult> GenerateAsync(
+        AiGenerationRequest request,
+        CancellationToken cancellationToken);
 }
 ```
 
-Secrets:
+Infrastructure implementations:
 
 ```text
-Ai__Groq__ApiKey
-Ai__Gemini__ApiKey
-ConnectionStrings__DefaultConnection
+GroqAiProvider
+GeminiAiProvider
+FakeAiProvider
 ```
 
-## NuGet Packages
+Provider selection:
 
-Core:
+- `IAiProviderFactory` lives in Application.
+- `AiProviderFactory` implementation lives in Infrastructure.
+- Handlers ask for a provider by type.
+- Handlers do not know concrete provider classes.
+
+Prompt generation:
+
+- `ReportPromptComposer` can live in Application because it is pure string composition.
+- Prompt templates can be read through `IReportTemplateReader`.
+- SQL-backed template reader lives in Infrastructure.
+
+## Export Architecture
+
+Application contract:
+
+```csharp
+public interface IReportExportRenderer
+{
+    ExportFormat Format { get; }
+
+    Task<ExportReportResultDto> RenderAsync(
+        GeneratedReportDto report,
+        CancellationToken cancellationToken);
+}
+```
+
+Infrastructure implementations:
+
+```text
+MarkdownReportExportRenderer
+HtmlReportExportRenderer
+PdfReportExportRenderer
+DocxReportExportRenderer
+```
+
+Rules:
+
+- Markdown is canonical.
+- HTML is rendered from Markdown.
+- PDF is rendered from HTML or a PDF document library.
+- DOCX is rendered through Open XML or a document library.
+- No export implementation belongs in Application.
+- Web only returns the generated file response.
+
+## Error Handling
+
+Use Result types for expected failures:
+
+- Report not found
+- User does not own report
+- Invalid report request
+- AI returned empty output
+- Unsupported export format
+- Quality validation failed
+
+Use exceptions for unexpected failures:
+
+- SQL Server unavailable
+- AI provider network timeout
+- File/rendering library crash
+- Programming errors
+
+Mapping:
+
+```text
+Domain error -> Application error -> Web ProblemDetails or MVC validation message
+Infrastructure exception -> Web exception middleware -> friendly error page / 503
+```
+
+## Security Rules
+
+Required:
+
+- Authentication required for dashboard, reports, generation, preview, export, regeneration, delete.
+- Every report query includes current user ID.
+- Controllers do not check database ownership directly.
+- Use cases check ownership through repositories.
+- Anti-forgery tokens on forms.
+- Server-side validation on commands.
+- API keys stored in user secrets or environment variables.
+- No generated prompt secrets in logs.
+- Optional prompt logging must be configurable and disabled by default.
+
+Ownership query pattern in Infrastructure:
+
+```csharp
+await db.GeneratedReports
+    .Where(report => report.UserId == userId)
+    .Where(report => report.Id == reportId)
+    .Where(report => report.DeletedAtUtc == null)
+    .FirstOrDefaultAsync(cancellationToken);
+```
+
+## Cross-Cutting Concerns
+
+Application pipeline behaviors:
+
+- `ValidationBehavior`
+- `AuthorizationBehavior`
+- `LoggingBehavior`
+- `PerformanceBehavior`
+- `UnhandledExceptionBehavior`
+
+Rules:
+
+- Behaviors must not reference Infrastructure implementations.
+- Behaviors may depend on Application abstractions.
+- Behaviors may use framework abstractions such as `ILogger<T>`.
+- Behaviors must not use Serilog static APIs directly.
+
+Web middleware:
+
+- Exception handling
+- Correlation ID
+- Authentication
+- Authorization
+- Static files
+
+Infrastructure interceptors:
+
+- Audit columns
+- Soft delete
+- Slow query logging
+
+## DI Registration
+
+Application:
+
+```csharp
+services.AddApplication();
+```
+
+Registers:
+
+- MediatR handlers
+- Validators
+- Pipeline behaviors
+- Pure policies
+
+Infrastructure:
+
+```csharp
+services.AddInfrastructure(configuration);
+```
+
+Registers:
+
+- EF Core
+- Identity stores
+- Repositories
+- AI providers
+- Export renderers
+- Unit of work
+- Date/time provider
+
+Web:
+
+```csharp
+services.AddScoped<ICurrentUserService, CurrentUserService>();
+```
+
+Registers:
+
+- MVC
+- Razor views
+- Identity UI
+- HttpContext accessor
+- Web adapters
+
+## Suggested NuGet Packages
+
+Domain:
+
+- No package preferred
+
+Application:
+
+- `MediatR`
+- `FluentValidation`
+
+Infrastructure:
 
 - `Microsoft.EntityFrameworkCore.SqlServer`
 - `Microsoft.EntityFrameworkCore.Tools`
 - `Microsoft.AspNetCore.Identity.EntityFrameworkCore`
-- `Microsoft.AspNetCore.Identity.UI`
-
-Validation and mapping:
-
-- `FluentValidation`
-- `FluentValidation.AspNetCore`
-- `AutoMapper.Extensions.Microsoft.DependencyInjection`
-
-Markdown and export:
-
 - `Markdig`
 - `DocumentFormat.OpenXml`
+- PDF package selected during implementation
 
-Optional PDF candidates:
+Web:
 
-- `QuestPDF`
-- `DinkToPdf`
-- Playwright-based HTML to PDF if acceptable later
+- `Microsoft.AspNetCore.Identity.UI`
 
-Testing:
+Tests:
 
 - `xunit`
 - `FluentAssertions`
-- `Moq`
+- `Moq` or `NSubstitute`
 - `Microsoft.AspNetCore.Mvc.Testing`
+- `NetArchTest.Rules`
 
-## Build Plan
+## Architecture Fitness Tests
 
-### Phase 1: Solution and Foundation
+Required tests:
 
-1. Create solution and class libraries.
-2. Add project references.
-3. Add MVC web project.
-4. Add ASP.NET Core Identity.
-5. Configure SQL Server.
-6. Add dependency injection extension methods.
-7. Add base domain entities.
+```text
+Domain must not reference Application
+Domain must not reference Infrastructure
+Domain must not reference Web
+Application must not reference Infrastructure
+Application must not reference Web
+Web controllers must not reference Infrastructure namespaces
+Web controllers must not reference Domain entities directly
+Infrastructure must implement Application ports
+Application handlers must not use EF Core namespaces
+Application handlers must not use HttpClient
+Application handlers must not use ASP.NET Core MVC types
+```
 
-### Phase 2: Domain and Database
+These tests should run in CI and block merges.
 
-1. Add domain entities.
-2. Add EF Core configurations.
-3. Add migrations.
-4. Seed criteria presets.
-5. Seed report style presets.
-6. Verify database creation.
+## Build Phases
 
-### Phase 3: User and Report Workflow Without Real AI
+### Phase 1: Solution Foundation
+
+1. Create solution.
+2. Create Domain, Application, Infrastructure, Web, and test projects.
+3. Add project references exactly as listed.
+4. Add architecture tests first.
+5. Add base Result, command, query, and entity types.
+
+### Phase 2: Authentication and Persistence
+
+1. Add ASP.NET Core Identity.
+2. Add SQL Server EF Core configuration.
+3. Add `ApplicationDbContext`.
+4. Add migrations.
+5. Add seeders for criteria and style presets.
+
+### Phase 3: Report Request Flow Without AI
 
 1. Build dashboard.
-2. Build create report wizard.
-3. Save report requests.
-4. Use fake AI provider.
-5. Save generated Markdown.
-6. Preview report.
-7. Show report history.
-
-This proves the product flow before external AI complexity.
+2. Build guided create report flow.
+3. Add create request command.
+4. Save report request.
+5. Add fake AI provider.
+6. Generate sample Markdown.
+7. Save generated report.
+8. Preview report.
 
 ### Phase 4: Real AI Integration
 
-1. Add AI provider abstraction.
-2. Implement Groq provider.
-3. Implement Gemini provider if time allows.
-4. Add provider factory.
-5. Add prompt builder.
-6. Add response parser.
-7. Store generation run metadata.
+1. Add Groq provider.
+2. Add Gemini provider if time allows.
+3. Add provider selection.
+4. Add prompt composer.
+5. Add generation run metadata.
+6. Add retry/failure handling.
 
-### Phase 5: Quality and Smart Suggestions
+### Phase 5: Product Quality Features
 
-1. Add style suggestions.
-2. Add criteria presets.
-3. Add report quality score.
-4. Display warnings in preview.
-5. Add regenerate flow.
+1. Add criteria presets.
+2. Add style suggestions.
+3. Add quality score.
+4. Add quality warnings.
+5. Add regeneration.
+6. Add report history search.
 
 ### Phase 6: Exports
 
-1. Add Markdown export.
-2. Add HTML export.
-3. Add PDF export.
-4. Add DOCX export.
-5. Add export buttons.
-6. Test generated files.
+1. Markdown export.
+2. HTML export.
+3. PDF export.
+4. DOCX export.
+5. Export buttons in preview.
+6. Download failure handling.
 
-### Phase 7: Polish and Testing
+### Phase 7: Testing and Polish
 
-1. Add search and filters in history.
-2. Add friendly error handling.
-3. Add unit tests.
-4. Add integration tests for ownership.
-5. Add README setup instructions.
-6. Add screenshots or usage notes.
+1. Domain tests.
+2. Application handler tests with fake ports.
+3. Infrastructure export tests.
+4. Integration tests for ownership.
+5. UI polish.
+6. README setup.
 
-## Testing Plan
+## Features That Make the App Feel Impressive
 
-Unit tests:
-
-- Prompt builder creates required sections.
-- Quality service detects missing sections.
-- Style suggestion service recommends suitable style.
-- Export coordinator selects correct service.
-- Fake AI provider returns deterministic output.
-
-Integration tests:
-
-- User can create report.
-- User can preview own report.
-- User cannot preview another user's report.
-- User can download Markdown export.
-- Failed AI generation is stored correctly.
-
-Manual tests:
-
-- Register and login.
-- Create report with two topics.
-- Create report with many topics.
-- Generate technical report.
-- Generate executive report.
-- Download all formats.
-- Regenerate report.
-- Delete report.
-- Search report history.
-
-## Product Details That Make It Feel Impressive
-
-These features are not huge individually, but together they make the app feel thoughtful:
-
-- Guided wizard instead of one long form
+- Guided report wizard
+- Smart criteria presets
 - Style suggestions
-- Criteria presets
-- Quality score
-- AI provider metadata
-- Regeneration history
-- Clean preview with export buttons
+- Fake AI provider for deterministic tests
+- Real Groq/Gemini provider abstraction
+- AI generation run history
+- Quality score and warnings
+- Markdown canonical content
+- Multi-format export
+- Regeneration with changed settings
 - Searchable report history
-- Soft delete
-- Friendly failed-generation recovery
-- Markdown as canonical content
-- Provider abstraction
-- Fake provider for testing
+- Strict user ownership
+- Architecture fitness tests
+- Clean error mapping
+- Provider health display
 - Seeded presets
-- Clear ownership checks
-
-## Future Enhancements
-
-Not required for first implementation, but architecture should not block them:
-
-- Admin dashboard
-- Team workspaces
-- Shared reports
-- Public report links
-- Report editing
-- Template editor
-- Scheduled research refresh
-- Source browsing and citation verification
-- Payment plans
-- API access
-- Background job queue
-- Email report delivery
-- Organization accounts
-- More export themes
-- Charts and visual decision matrices
-
-## Architecture Decisions
-
-| Decision | Choice | Reason |
-| --- | --- | --- |
-| UI style | ASP.NET Core MVC with Razor | Faster than API plus SPA and still professional |
-| Solution style | Multi-project class library solution | Shows strong .NET architecture |
-| Database | SQL Server | Matches enterprise .NET expectations |
-| Auth | ASP.NET Core Identity | Standard and practical |
-| Canonical report content | Markdown | Easy to generate, preview, store, and export |
-| AI design | Provider abstraction | Supports Groq, Gemini, fake provider, and future providers |
-| Report creation | Guided wizard | Better user experience than a long form |
-| Quality checks | Built-in lightweight scoring | Shows responsible AI use |
-| Exports | Separate services per format | Keeps controllers clean |
-| Admin | Manual config in v1 | Keeps first version focused |
+- Soft delete
+- Clear product dashboard
 
 ## Definition of Done
 
-The architecture is complete enough when:
+The architecture is correct when:
 
-- The solution contains separate Domain, Application, Infrastructure, Web, and Test projects.
-- Users can register and log in.
-- Users can create report requests.
-- Reports are generated through an AI provider interface.
-- A fake AI provider exists for testing.
-- Generated reports are stored in SQL Server.
-- Users can preview reports.
-- Users can search their report history.
-- Users can regenerate reports.
-- Users can export Markdown, HTML, PDF, and DOCX.
-- Users cannot access reports owned by another user.
-- The code clearly separates UI, business workflow, domain, infrastructure, and exports.
-- The project can be explained as a serious AI-powered .NET product, not just a small demo.
+- Domain has no dependency on Application, Infrastructure, Web, EF Core, or ASP.NET Core.
+- Application references Domain only.
+- Application contains use cases and ports, not Infrastructure implementations.
+- Infrastructure implements persistence, AI, export, and technical adapters.
+- Web controllers dispatch Application commands and queries only.
+- Web maps view models to Application DTOs and results back to views.
+- No Domain entities are passed directly to Razor views.
+- No controller calls `DbContext`.
+- No Application handler references `HttpClient`, `DbContext`, or MVC types.
+- Architecture tests enforce these rules.
+- Users can register, generate reports, preview, regenerate, search history, and export all formats.
