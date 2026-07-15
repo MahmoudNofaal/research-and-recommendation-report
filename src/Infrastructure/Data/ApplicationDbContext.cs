@@ -3,7 +3,6 @@ using Domain.Entities;
 using Infrastructure.Data.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using System.Reflection.Emit;
 
 namespace Infrastructure.Data
 {
@@ -45,17 +44,16 @@ namespace Infrastructure.Data
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);
-
-            // NOTE: Data/Configurations/*.cs (one IEntityTypeConfiguration<T>
-            // per aggregate/entity) have not been authored yet. Until they
-            // exist, EF Core's default conventions cannot map these aggregates
-            // correctly on their own: private constructors, strongly typed IDs
+            // Data/Configurations/*.cs (one or more IEntityTypeConfiguration<T>
+            // per aggregate, plus one per owned child collection) supply the
+            // mapping every aggregate needs beyond EF Core's default
+            // conventions: private constructors, strongly typed IDs
             // (ReportRequestId, GeneratedReportId, ...), value-object
             // properties (ReportTitle, TargetAudience, SourceUrl, ...), and
             // privately backed collections (_topics, _criteria, _citations,
-            // _recommendations) all need explicit configuration. Add those
-            // before the first migration.
+            // _recommendations, _suggestedCriteria) are all configured
+            // explicitly there rather than relying on convention.
+            modelBuilder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);
         }
     }
 }

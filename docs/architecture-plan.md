@@ -139,6 +139,7 @@ Allowed in Application:
 - Pipeline behaviors
 - Ports/interfaces needed by use cases
 - Pure policies with no external I/O
+- Strongly typed options/settings classes
 
 Forbidden in Application:
 
@@ -485,6 +486,7 @@ research-and-recommendation-report/
 
       Options/
         AiOptions.cs
+        AiProviderOptions.cs
         ReportGenerationOptions.cs
         ExportOptions.cs
 
@@ -703,6 +705,7 @@ research-and-recommendation-report/
       Program.cs
       appsettings.json
       appsettings.Development.json
+      appsettings.Production.json
 
   tests/
     ResearchReportGenerator.ArchitectureTests/
@@ -1413,12 +1416,40 @@ Rules:
 - Middleware handles HTTP-level concerns.
 - EF Core interceptors handle persistence-level concerns.
 
+## Configuration and Settings Pattern
+
+The application uses the ASP.NET Core options/settings pattern for application-level configuration.
+
+Configuration files:
+
+- `appsettings.json`
+- `appsettings.Development.json`
+- `appsettings.Production.json`
+
+Rules:
+
+- `appsettings.json` contains safe defaults shared by all environments.
+- `appsettings.Development.json` contains local development overrides, such as LocalDB and fake AI defaults.
+- `appsettings.Production.json` contains production behavior overrides, but no committed secrets.
+- API keys, production connection strings, and other secrets must come from user secrets, environment variables, or deployment secret storage.
+- Web `Program.cs` is the composition root and passes `builder.Configuration` into Application and Infrastructure registration.
+- Application owns strongly typed settings classes under `Application/Options`.
+- Settings are registered with `IOptions<T>` and validated on startup.
+- Application and Infrastructure services consume `IOptions<T>` instead of reading raw configuration directly, except for infrastructure bootstrap concerns such as connection-string setup.
+
+Current strongly typed settings:
+
+- `AiOptions`
+- `AiProviderOptions`
+- `ReportGenerationOptions`
+- `ExportOptions`
+
 ## Dependency Injection
 
 Web `Program.cs` is the composition root.
 
 ```csharp
-builder.Services.AddApplication();
+builder.Services.AddApplication(builder.Configuration);
 builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
 builder.Services.AddControllersWithViews();
@@ -1430,6 +1461,7 @@ Application registration:
 - Validators
 - Pipeline behaviors
 - Pure policies
+- Strongly typed options with validation
 
 Infrastructure registration:
 
@@ -1459,6 +1491,8 @@ Application:
 
 - `MediatR`
 - `FluentValidation`
+- `Microsoft.Extensions.Options.ConfigurationExtensions`
+- `Microsoft.Extensions.Options.DataAnnotations`
 
 Infrastructure:
 
