@@ -20,13 +20,14 @@ namespace Domain.Entities
 
         private readonly List<SuggestedCriterion> _suggestedCriteria = [];
 
-        private CriteriaPreset(
+        private CriteriaPreset
+        (
             CriteriaPresetId id,
             string name,
             string? description,
             PresetCategory category,
-            int sortOrder)
-            : base(id)
+            int sortOrder
+        ) : base(id)
         {
             Name = name;
             Description = description;
@@ -55,24 +56,37 @@ namespace Domain.Entities
 
         public IReadOnlyList<SuggestedCriterion> SuggestedCriteria => _suggestedCriteria.AsReadOnly();
 
-        public static CriteriaPreset Create(
+        public static CriteriaPreset Create
+        (
             string name,
             string? description,
             PresetCategory category,
             int sortOrder,
-            IReadOnlyCollection<SuggestedCriterion> suggestedCriteria)
+            IReadOnlyCollection<SuggestedCriterion> suggestedCriteria
+        )
         {
             ArgumentNullException.ThrowIfNull(category);
             ArgumentNullException.ThrowIfNull(suggestedCriteria);
 
             if (suggestedCriteria.Count == 0)
             {
-                throw new InvalidReportStateException(ReportDomainError.CriteriaPreset.AtLeastOneSuggestedCriterionRequired);
+                throw new InvalidReportStateException
+                (
+                    ReportDomainError.CriteriaPreset.AtLeastOneSuggestedCriterionRequired
+                );
             }
 
-            var preset = new CriteriaPreset(
-                CriteriaPresetId.New(), NormalizeName(name), NormalizeDescription(description), category, sortOrder);
+            var preset = new CriteriaPreset
+            (
+                CriteriaPresetId.New(),
+                NormalizeName(name),
+                NormalizeDescription(description),
+                category,
+                sortOrder
+            );
+
             preset._suggestedCriteria.AddRange(suggestedCriteria);
+
             return preset;
         }
 
@@ -82,7 +96,10 @@ namespace Domain.Entities
 
             if (suggestedCriteria.Count == 0)
             {
-                throw new InvalidReportStateException(ReportDomainError.CriteriaPreset.AtLeastOneSuggestedCriterionRequired);
+                throw new InvalidReportStateException
+                (
+                    ReportDomainError.CriteriaPreset.AtLeastOneSuggestedCriterionRequired
+                );
             }
 
             _suggestedCriteria.Clear();
@@ -110,7 +127,11 @@ namespace Domain.Entities
             var trimmed = name.Trim();
             if (trimmed.Length > MaxNameLength)
             {
-                throw new ArgumentOutOfRangeException(nameof(name), $"Preset name cannot exceed {MaxNameLength} characters.");
+                throw new ArgumentOutOfRangeException
+                (
+                    nameof(name),
+                    $"Preset name cannot exceed {MaxNameLength} characters."
+                );
             }
 
             return trimmed;
@@ -126,7 +147,11 @@ namespace Domain.Entities
             var trimmed = description.Trim();
             if (trimmed.Length > MaxDescriptionLength)
             {
-                throw new ArgumentOutOfRangeException(nameof(description), $"Preset description cannot exceed {MaxDescriptionLength} characters.");
+                throw new ArgumentOutOfRangeException
+                (
+                    nameof(description),
+                    $"Preset description cannot exceed {MaxDescriptionLength} characters."
+                );
             }
 
             return trimmed;

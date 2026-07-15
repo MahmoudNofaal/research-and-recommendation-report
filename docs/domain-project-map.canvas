@@ -1,0 +1,1602 @@
+{
+  "nodes": [
+    {
+      "id": "domain-overview",
+      "type": "text",
+      "text": "# Domain Project Map\n\nPurpose: pure business model for the Research Report Generator.\n\nMain idea:\n- ReportRequest captures the user's ask.\n- ReportMode decides whether the request is single-topic research or multi-topic comparison.\n- GeneratedReport stores canonical Markdown output, recommendations, citations, quality score, and status.\n- ReportGenerationRun records each AI attempt.\n- ReportExport records downloadable output actions.\n- Templates, criteria presets, and style presets support controlled report generation.\n\nOpen this canvas in Obsidian to zoom around the Domain layer.",
+      "x": -920,
+      "y": -1320,
+      "width": 980,
+      "height": 420,
+      "color": "1"
+    },
+    {
+      "id": "group-Common",
+      "type": "text",
+      "text": "# Common Base Types\n\nFolder: `src/Domain/Common`",
+      "x": -1800,
+      "y": -720,
+      "width": 500,
+      "height": 150,
+      "color": "1"
+    },
+    {
+      "id": "group-Entities",
+      "type": "text",
+      "text": "# Entities and Aggregates\n\nFolder: `src/Domain/Entities`",
+      "x": -900,
+      "y": -720,
+      "width": 500,
+      "height": 150,
+      "color": "4"
+    },
+    {
+      "id": "group-ValueObjects",
+      "type": "text",
+      "text": "# Value Objects\n\nFolder: `src/Domain/ValueObjects`",
+      "x": 0,
+      "y": -720,
+      "width": 500,
+      "height": 150,
+      "color": "2"
+    },
+    {
+      "id": "group-Enums",
+      "type": "text",
+      "text": "# Enums\n\nFolder: `src/Domain/Enums`",
+      "x": 900,
+      "y": -720,
+      "width": 500,
+      "height": 150,
+      "color": "3"
+    },
+    {
+      "id": "group-Events",
+      "type": "text",
+      "text": "# Domain Events\n\nFolder: `src/Domain/Events`",
+      "x": -1800,
+      "y": 1120,
+      "width": 500,
+      "height": 150,
+      "color": "5"
+    },
+    {
+      "id": "group-Errors",
+      "type": "text",
+      "text": "# Domain Errors\n\nFolder: `src/Domain/Errors`",
+      "x": -900,
+      "y": 1120,
+      "width": 500,
+      "height": 150,
+      "color": "6"
+    },
+    {
+      "id": "group-Exceptions",
+      "type": "text",
+      "text": "# Domain Exceptions\n\nFolder: `src/Domain/Exceptions`",
+      "x": 0,
+      "y": 1120,
+      "width": 500,
+      "height": 150,
+      "color": "6"
+    },
+    {
+      "id": "group-Services",
+      "type": "text",
+      "text": "# Domain Services\n\nFolder: `src/Domain/Services`",
+      "x": 900,
+      "y": 1120,
+      "width": 500,
+      "height": 150,
+      "color": "4"
+    },
+    {
+      "id": "node-Common-AggregateRoot",
+      "type": "text",
+      "text": "# AggregateRoot\n\n`Common\\AggregateRoot.cs`\n\n**Kind:** class\n**Base:** Entity<TId>\n\n**Fields**\n- _domainEvents\n\n**Main Methods**\n- ClearDomainEvents()",
+      "x": -1760,
+      "y": -500,
+      "width": 480,
+      "height": 300,
+      "color": "1"
+    },
+    {
+      "id": "node-Common-AuditableEntity",
+      "type": "text",
+      "text": "# AuditableEntity\n\n`Common\\AuditableEntity.cs`\n\n**Kind:** class\n**Base:** AggregateRoot<TId>\n\n**Properties**\n- CreatedAtUtc\n- UpdatedAtUtc",
+      "x": -1760,
+      "y": -70,
+      "width": 480,
+      "height": 300,
+      "color": "1"
+    },
+    {
+      "id": "node-Common-DomainEvent",
+      "type": "text",
+      "text": "# DomainEvent\n\n`Common\\DomainEvent.cs`\n\n**Kind:** class\n**Base:** IDomainEvent\n\n**Properties**\n- OccurredOnUtc",
+      "x": -1760,
+      "y": 360,
+      "width": 480,
+      "height": 300,
+      "color": "1"
+    },
+    {
+      "id": "node-Common-Entity",
+      "type": "text",
+      "text": "# Entity\n\n`Common\\Entity.cs`\n\n**Kind:** class\n**Base:** IEquatable<Entity<TId>>\n\n**Properties**\n- Id\n\n**Main Methods**\n- Equals()\n- GetHashCode()",
+      "x": -1760,
+      "y": 790,
+      "width": 480,
+      "height": 300,
+      "color": "1"
+    },
+    {
+      "id": "node-Common-IDomainEvent",
+      "type": "text",
+      "text": "# IDomainEvent\n\n`Common\\IDomainEvent.cs`\n\n**Kind:** interface",
+      "x": -1240,
+      "y": -500,
+      "width": 480,
+      "height": 300,
+      "color": "1"
+    },
+    {
+      "id": "node-Common-SoftDeletableEntity",
+      "type": "text",
+      "text": "# SoftDeletableEntity\n\n`Common\\SoftDeletableEntity.cs`\n\n**Kind:** class\n**Base:** AuditableEntity<TId>\n\n**Properties**\n- DeletedAtUtc\n\n**Main Methods**\n- Delete()",
+      "x": -1240,
+      "y": -70,
+      "width": 480,
+      "height": 300,
+      "color": "1"
+    },
+    {
+      "id": "node-Common-ValueObject",
+      "type": "text",
+      "text": "# ValueObject\n\n`Common\\ValueObject.cs`\n\n**Kind:** class\n**Base:** IEquatable<ValueObject>\n\n**Main Methods**\n- Equals()\n- GetHashCode()",
+      "x": -1240,
+      "y": 360,
+      "width": 480,
+      "height": 300,
+      "color": "1"
+    },
+    {
+      "id": "node-Entities-CriteriaPreset",
+      "type": "text",
+      "text": "# CriteriaPreset\n\n`Entities\\CriteriaPreset.cs`\n\n**Kind:** class\n**Base:** AggregateRoot<CriteriaPresetId>\n\n**Constants**\n- MaxNameLength\n- MaxDescriptionLength\n\n**Fields**\n- _suggestedCriteria\n\n**Properties**\n- Name\n- Description\n- Category\n- IsActive\n- SortOrder\n\n**Main Methods**\n- Create()\n- ReplaceSuggestedCriteria()\n- UpdateDetails()\n- Activate()\n- Deactivate()",
+      "x": -860,
+      "y": -500,
+      "width": 480,
+      "height": 390,
+      "color": "4"
+    },
+    {
+      "id": "node-Entities-GeneratedReport",
+      "type": "text",
+      "text": "# GeneratedReport\n\n`Entities\\GeneratedReport.cs`\n\n**Kind:** class\n**Base:** AggregateRoot<GeneratedReportId>\n\n**Constants**\n- MaxModelNameLength\n\n**Fields**\n- _citations\n- _recommendations\n\n**Properties**\n- ReportRequestId\n- UserId\n- Title\n- Content\n- AiProvider\n- ModelName\n- PromptVersion\n- Status\n- QualityScore\n- QualityWarnings\n- Version\n- GeneratedAtUtc\n- UpdatedAtUtc\n- DeletedAtUtc\n\n**Main Methods**\n- Create()\n- AddRecommendation()\n- AddCitation()\n- CompleteGeneration()\n- Regenerate()\n- Delete()",
+      "x": -860,
+      "y": -70,
+      "width": 480,
+      "height": 390,
+      "color": "4"
+    },
+    {
+      "id": "node-Entities-ReportCitation",
+      "type": "text",
+      "text": "# ReportCitation\n\n`Entities\\ReportCitation.cs`\n\n**Kind:** class\n**Base:** Entity<ReportCitationId>\n\n**Constants**\n- MaxTitleLength\n- MaxSourceNameLength\n- MaxNotesLength\n\n**Properties**\n- Title\n- Url\n- SourceName\n- PublishedAtUtc\n- AccessedAtUtc\n- Notes\n- SortOrder\n\n**Main Methods**\n- Create()\n- UpdateSortOrder()",
+      "x": -860,
+      "y": 360,
+      "width": 480,
+      "height": 390,
+      "color": "4"
+    },
+    {
+      "id": "node-Entities-ReportCriterion",
+      "type": "text",
+      "text": "# ReportCriterion\n\n`Entities\\ReportCriterion.cs`\n\n**Kind:** class\n**Base:** Entity<ReportCriterionId>\n\n**Constants**\n- MaxDescriptionLength\n\n**Properties**\n- Name\n- Description\n- Weight\n- SortOrder\n\n**Main Methods**\n- Create()\n- Rename()\n- UpdateDescription()\n- UpdateWeight()\n- UpdateSortOrder()",
+      "x": -860,
+      "y": 790,
+      "width": 480,
+      "height": 390,
+      "color": "4"
+    },
+    {
+      "id": "node-Entities-ReportExport",
+      "type": "text",
+      "text": "# ReportExport\n\n`Entities\\ReportExport.cs`\n\n**Kind:** class\n**Base:** AggregateRoot<ReportExportId>\n\n**Properties**\n- GeneratedReportId\n- UserId\n- Format\n- FileName\n- ContentType\n- ExportedAtUtc\n\n**Main Methods**\n- Create()",
+      "x": -340,
+      "y": -500,
+      "width": 480,
+      "height": 390,
+      "color": "4"
+    },
+    {
+      "id": "node-Entities-ReportGenerationRun",
+      "type": "text",
+      "text": "# ReportGenerationRun\n\n`Entities\\ReportGenerationRun.cs`\n\n**Kind:** class\n**Base:** AggregateRoot<ReportGenerationRunId>\n\n**Constants**\n- MaxModelNameLength\n- MaxPromptTextLength\n- MaxRawResponseLength\n\n**Properties**\n- ReportRequestId\n- GeneratedReportId\n- UserId\n- AiProvider\n- ModelName\n- PromptVersion\n- PromptText\n- RawResponse\n- Status\n- Timing\n- TokenUsage\n- ErrorDetail\n\n**Main Methods**\n- Create()\n- Begin()\n- Succeed()\n- Fail()",
+      "x": -340,
+      "y": -70,
+      "width": 480,
+      "height": 390,
+      "color": "4"
+    },
+    {
+      "id": "node-Entities-ReportRecommendation",
+      "type": "text",
+      "text": "# ReportRecommendation\n\n`Entities\\ReportRecommendation.cs`\n\n**Kind:** class\n**Base:** Entity<ReportRecommendationId>\n\n**Constants**\n- MaxScenarioLength\n- MaxRecommendedOptionLength\n- MaxReasoningLength\n\n**Properties**\n- Scenario\n- RecommendedOption\n- Reasoning\n- Strength\n- SortOrder\n\n**Main Methods**\n- Create()\n- UpdateSortOrder()",
+      "x": -340,
+      "y": 360,
+      "width": 480,
+      "height": 390,
+      "color": "4"
+    },
+    {
+      "id": "node-Entities-ReportRequest",
+      "type": "text",
+      "text": "# ReportRequest\n\n`Entities\\ReportRequest.cs`\n\n**Kind:** class\n**Base:** SoftDeletableEntity<ReportRequestId>\n\n**Constants**\n- MinimumTopicCount\n- MinimumComparisonTopicCount\n- MaximumTopicCount\n- MinimumComparisonCriterionCount\n\n**Fields**\n- _topics\n- _criteria\n\n**Properties**\n- UserId\n- Title\n- TargetAudience\n- ReportMode\n- Style\n- TechnicalDepth\n- ReportLength\n- PreferredAiProvider\n- Status\n- IndustryOrDomain\n- CurrentTechnologyStack\n- PerformanceRequirements\n- SecurityRequirements\n- BudgetConsiderations\n- MustInclude\n- MustAvoid\n\n**Main Methods**\n- Create()\n- UpdateCoreDetails()\n- UpdateReportMode()\n- UpdatePreferredAiProvider()\n- UpdateSupplementaryNotes()\n- AddTopic()\n- RemoveTopic()\n- ReorderTopics()\n- AddCriterion()\n- RemoveCriterion()\n- UpdateCriterionWeight()\n- Submit()",
+      "x": -340,
+      "y": 790,
+      "width": 480,
+      "height": 390,
+      "color": "4"
+    },
+    {
+      "id": "node-Entities-ReportStylePreset",
+      "type": "text",
+      "text": "# ReportStylePreset\n\n`Entities\\ReportStylePreset.cs`\n\n**Kind:** class\n**Base:** AggregateRoot<ReportStylePresetId>\n\n**Constants**\n- MaxNameLength\n- MaxDescriptionLength\n\n**Properties**\n- Name\n- Description\n- RecommendedAudience\n- DefaultStyle\n- DefaultDepth\n- IsActive\n- SortOrder\n\n**Main Methods**\n- Create()\n- UpdateDetails()\n- Activate()\n- Deactivate()",
+      "x": 180,
+      "y": -500,
+      "width": 480,
+      "height": 390,
+      "color": "4"
+    },
+    {
+      "id": "node-Entities-ReportTemplate",
+      "type": "text",
+      "text": "# ReportTemplate\n\n`Entities\\ReportTemplate.cs`\n\n**Kind:** class\n**Base:** AuditableEntity<ReportTemplateId>\n\n**Constants**\n- MaxNameLength\n- MaxDescriptionLength\n\n**Properties**\n- Name\n- Description\n- SystemPrompt\n- UserPromptTemplate\n- IsActive\n\n**Main Methods**\n- Create()\n- UpdateContent()\n- Activate()\n- Deactivate()",
+      "x": 180,
+      "y": -70,
+      "width": 480,
+      "height": 390,
+      "color": "4"
+    },
+    {
+      "id": "node-Entities-ReportTopic",
+      "type": "text",
+      "text": "# ReportTopic\n\n`Entities\\ReportTopic.cs`\n\n**Kind:** class\n**Base:** Entity<ReportTopicId>\n\n**Constants**\n- MaxDescriptionLength\n\n**Properties**\n- Name\n- Description\n- SortOrder\n\n**Main Methods**\n- Create()\n- Rename()\n- UpdateDescription()\n- UpdateSortOrder()",
+      "x": 180,
+      "y": 360,
+      "width": 480,
+      "height": 390,
+      "color": "4"
+    },
+    {
+      "id": "node-Enums-AiProviderType",
+      "type": "text",
+      "text": "# AiProviderType\n\n`Enums\\AiProviderType.cs`\n\n**Kind:** enum\n\n**Values**\n- SystemDefault = 0\n- Groq = 1\n- Gemini = 2\n- Fake = 3\n\n**Main Methods**\n- IsConcreteProvider()",
+      "x": 940,
+      "y": -500,
+      "width": 480,
+      "height": 300,
+      "color": "3"
+    },
+    {
+      "id": "node-Enums-ExportFormat",
+      "type": "text",
+      "text": "# ExportFormat\n\n`Enums\\ExportFormat.cs`\n\n**Kind:** enum\n\n**Values**\n- Markdown = 0\n- Html = 1\n- Pdf = 2\n- Docx = 3",
+      "x": 940,
+      "y": -70,
+      "width": 480,
+      "height": 300,
+      "color": "3"
+    },
+    {
+      "id": "node-Enums-GenerationStatus",
+      "type": "text",
+      "text": "# GenerationStatus\n\n`Enums\\GenerationStatus.cs`\n\n**Kind:** enum\n\n**Values**\n- Pending = 0\n- InProgress = 1\n- Succeeded = 2\n- Failed = 3",
+      "x": 940,
+      "y": 360,
+      "width": 480,
+      "height": 300,
+      "color": "3"
+    },
+    {
+      "id": "node-Enums-QualityWarningSeverity",
+      "type": "text",
+      "text": "# QualityWarningSeverity\n\n`Enums\\QualityWarningSeverity.cs`\n\n**Kind:** enum\n\n**Values**\n- Info = 0\n- Warning = 1\n- Blocking = 2",
+      "x": 940,
+      "y": 790,
+      "width": 480,
+      "height": 300,
+      "color": "3"
+    },
+    {
+      "id": "node-Enums-RecommendationStrength",
+      "type": "text",
+      "text": "# RecommendationStrength\n\n`Enums\\RecommendationStrength.cs`\n\n**Kind:** enum\n\n**Values**\n- NotRecommended = 0\n- ConditionallyRecommended = 1\n- Recommended = 2\n- StronglyRecommended = 3",
+      "x": 1460,
+      "y": -500,
+      "width": 480,
+      "height": 300,
+      "color": "3"
+    },
+    {
+      "id": "node-Enums-ReportLength",
+      "type": "text",
+      "text": "# ReportLength\n\n`Enums\\ReportLength.cs`\n\n**Kind:** enum\n\n**Values**\n- Concise = 0\n- Standard = 1\n- Comprehensive = 2",
+      "x": 1460,
+      "y": -70,
+      "width": 480,
+      "height": 300,
+      "color": "3"
+    },
+    {
+      "id": "node-Enums-ReportMode",
+      "type": "text",
+      "text": "# ReportMode\n\n`Enums\\ReportMode.cs`\n\n**Kind:** enum\n\n**Values**\n- SingleTopicResearch = 1\n- Comparison = 2",
+      "x": 1460,
+      "y": 360,
+      "width": 480,
+      "height": 300,
+      "color": "3"
+    },
+    {
+      "id": "node-Enums-ReportRequestStatus",
+      "type": "text",
+      "text": "# ReportRequestStatus\n\n`Enums\\ReportRequestStatus.cs`\n\n**Kind:** enum\n\n**Values**\n- Draft = 0\n- Submitted = 1",
+      "x": 1460,
+      "y": 790,
+      "width": 480,
+      "height": 300,
+      "color": "3"
+    },
+    {
+      "id": "node-Enums-ReportStatus",
+      "type": "text",
+      "text": "# ReportStatus\n\n`Enums\\ReportStatus.cs`\n\n**Kind:** enum\n\n**Values**\n- Draft = 0\n- Ready = 1",
+      "x": 1980,
+      "y": -500,
+      "width": 480,
+      "height": 300,
+      "color": "3"
+    },
+    {
+      "id": "node-Enums-ReportStyle",
+      "type": "text",
+      "text": "# ReportStyle\n\n`Enums\\ReportStyle.cs`\n\n**Kind:** enum\n\n**Values**\n- Technical = 0\n- Executive = 1\n- Educational = 2\n- Balanced = 3",
+      "x": 1980,
+      "y": -70,
+      "width": 480,
+      "height": 300,
+      "color": "3"
+    },
+    {
+      "id": "node-Enums-TechnicalDepth",
+      "type": "text",
+      "text": "# TechnicalDepth\n\n`Enums\\TechnicalDepth.cs`\n\n**Kind:** enum\n\n**Values**\n- Beginner = 0\n- Intermediate = 1\n- Advanced = 2\n- Expert = 3",
+      "x": 1980,
+      "y": 360,
+      "width": 480,
+      "height": 300,
+      "color": "3"
+    },
+    {
+      "id": "node-Errors-DomainError",
+      "type": "text",
+      "text": "# DomainError\n\n`Errors\\DomainError.cs`\n\n**Kind:** record\n\n**Main Methods**\n- ToString()",
+      "x": -860,
+      "y": 1340,
+      "width": 480,
+      "height": 300,
+      "color": "6"
+    },
+    {
+      "id": "node-Errors-ReportDomainError",
+      "type": "text",
+      "text": "# ReportDomainError\n\n`Errors\\ReportDomainError.cs`\n\n**Kind:** class\n\n**Main Methods**\n- MinimumTopicsRequired()\n- MinimumComparisonTopicsRequired()\n- MaximumTopicsExceeded()\n- DuplicateTopicName()\n- MinimumCriteriaRequired()\n- DuplicateCriterionName()\n- ContentTooShort()\n- InvalidStatusTransition()\n- MissingRequiredPlaceholder()",
+      "x": -860,
+      "y": 1770,
+      "width": 480,
+      "height": 300,
+      "color": "6"
+    },
+    {
+      "id": "node-Events-ReportDeletedDomainEvent",
+      "type": "text",
+      "text": "# ReportDeletedDomainEvent\n\n`Events\\ReportDeletedDomainEvent.cs`\n\n**Kind:** class\n**Base:** DomainEvent\n\n**Properties**\n- GeneratedReportId\n- ReportRequestId\n- UserId",
+      "x": -1760,
+      "y": 1340,
+      "width": 480,
+      "height": 300,
+      "color": "5"
+    },
+    {
+      "id": "node-Events-ReportExportedDomainEvent",
+      "type": "text",
+      "text": "# ReportExportedDomainEvent\n\n`Events\\ReportExportedDomainEvent.cs`\n\n**Kind:** class\n**Base:** DomainEvent\n\n**Properties**\n- ReportExportId\n- GeneratedReportId\n- UserId\n- Format",
+      "x": -1760,
+      "y": 1770,
+      "width": 480,
+      "height": 300,
+      "color": "5"
+    },
+    {
+      "id": "node-Events-ReportGeneratedDomainEvent",
+      "type": "text",
+      "text": "# ReportGeneratedDomainEvent\n\n`Events\\ReportGeneratedDomainEvent.cs`\n\n**Kind:** class\n**Base:** DomainEvent\n\n**Properties**\n- GeneratedReportId\n- ReportRequestId\n- UserId\n- Version\n- Status",
+      "x": -1760,
+      "y": 2200,
+      "width": 480,
+      "height": 300,
+      "color": "5"
+    },
+    {
+      "id": "node-Events-ReportGenerationFailedDomainEvent",
+      "type": "text",
+      "text": "# ReportGenerationFailedDomainEvent\n\n`Events\\ReportGenerationFailedDomainEvent.cs`\n\n**Kind:** class\n**Base:** DomainEvent\n\n**Properties**\n- ReportGenerationRunId\n- ReportRequestId\n- UserId\n- ErrorDetail",
+      "x": -1760,
+      "y": 2630,
+      "width": 480,
+      "height": 300,
+      "color": "5"
+    },
+    {
+      "id": "node-Events-ReportGenerationStartedDomainEvent",
+      "type": "text",
+      "text": "# ReportGenerationStartedDomainEvent\n\n`Events\\ReportGenerationStartedDomainEvent.cs`\n\n**Kind:** class\n**Base:** DomainEvent\n\n**Properties**\n- ReportGenerationRunId\n- ReportRequestId\n- UserId\n- AiProvider",
+      "x": -1240,
+      "y": 1340,
+      "width": 480,
+      "height": 300,
+      "color": "5"
+    },
+    {
+      "id": "node-Events-ReportRequestCreatedDomainEvent",
+      "type": "text",
+      "text": "# ReportRequestCreatedDomainEvent\n\n`Events\\ReportRequestCreatedDomainEvent.cs`\n\n**Kind:** class\n**Base:** DomainEvent\n\n**Properties**\n- ReportRequestId\n- UserId",
+      "x": -1240,
+      "y": 1770,
+      "width": 480,
+      "height": 300,
+      "color": "5"
+    },
+    {
+      "id": "node-Exceptions-DomainException",
+      "type": "text",
+      "text": "# DomainException\n\n`Exceptions\\DomainException.cs`\n\n**Kind:** class\n**Base:** Exception\n\n**Properties**\n- Error",
+      "x": 40,
+      "y": 1340,
+      "width": 480,
+      "height": 300,
+      "color": "6"
+    },
+    {
+      "id": "node-Exceptions-InvalidReportRequestException",
+      "type": "text",
+      "text": "# InvalidReportRequestException\n\n`Exceptions\\InvalidReportRequestException.cs`\n\n**Kind:** class\n**Base:** ReportDomainException",
+      "x": 40,
+      "y": 1770,
+      "width": 480,
+      "height": 300,
+      "color": "6"
+    },
+    {
+      "id": "node-Exceptions-InvalidReportStateException",
+      "type": "text",
+      "text": "# InvalidReportStateException\n\n`Exceptions\\InvalidReportStateException.cs`\n\n**Kind:** class\n**Base:** ReportDomainException",
+      "x": 40,
+      "y": 2200,
+      "width": 480,
+      "height": 300,
+      "color": "6"
+    },
+    {
+      "id": "node-Exceptions-ReportDomainException",
+      "type": "text",
+      "text": "# ReportDomainException\n\n`Exceptions\\ReportDomainException.cs`\n\n**Kind:** class\n**Base:** DomainException",
+      "x": 40,
+      "y": 2630,
+      "width": 480,
+      "height": 300,
+      "color": "6"
+    },
+    {
+      "id": "node-Services-ReportQualityDomainService",
+      "type": "text",
+      "text": "# ReportQualityDomainService\n\n`Services\\ReportQualityDomainService.cs`\n\n**Kind:** class\n\n**Constants**\n- ExpectedCharactersPerTopic\n- ExpectedSingleTopicResearchCharacters",
+      "x": 940,
+      "y": 1340,
+      "width": 480,
+      "height": 300,
+      "color": "4"
+    },
+    {
+      "id": "node-ValueObjects-ContentType",
+      "type": "text",
+      "text": "# ContentType\n\n`ValueObjects\\ContentType.cs`\n\n**Kind:** class\n**Base:** ValueObject\n\n**Properties**\n- Value\n\n**Main Methods**\n- ForFormat()\n- ToString()",
+      "x": 40,
+      "y": -500,
+      "width": 480,
+      "height": 330,
+      "color": "2"
+    },
+    {
+      "id": "node-ValueObjects-CriteriaPresetId",
+      "type": "text",
+      "text": "# CriteriaPresetId\n\n`ValueObjects\\CriteriaPresetId.cs`\n\n**Kind:** record struct\n\n**Main Methods**\n- New()\n- From()\n- ToString()",
+      "x": 40,
+      "y": -70,
+      "width": 480,
+      "height": 330,
+      "color": "2"
+    },
+    {
+      "id": "node-ValueObjects-CriterionWeight",
+      "type": "text",
+      "text": "# CriterionWeight\n\n`ValueObjects\\CriterionWeight.cs`\n\n**Kind:** class\n**Base:** ValueObject\n\n**Constants**\n- MinValue\n- MaxValue\n- DefaultValue\n\n**Properties**\n- Value\n\n**Main Methods**\n- Create()\n- Default()\n- ToString()",
+      "x": 40,
+      "y": 360,
+      "width": 480,
+      "height": 330,
+      "color": "2"
+    },
+    {
+      "id": "node-ValueObjects-ErrorDetail",
+      "type": "text",
+      "text": "# ErrorDetail\n\n`ValueObjects\\ErrorDetail.cs`\n\n**Kind:** class\n**Base:** ValueObject\n\n**Constants**\n- MaxMessageLength\n\n**Properties**\n- ErrorCode\n- ErrorMessage\n\n**Main Methods**\n- Create()\n- ToString()",
+      "x": 40,
+      "y": 790,
+      "width": 480,
+      "height": 330,
+      "color": "2"
+    },
+    {
+      "id": "node-ValueObjects-ExportFileName",
+      "type": "text",
+      "text": "# ExportFileName\n\n`ValueObjects\\ExportFileName.cs`\n\n**Kind:** class\n**Base:** ValueObject\n\n**Properties**\n- Value\n\n**Main Methods**\n- Create()\n- ToString()",
+      "x": 560,
+      "y": -500,
+      "width": 480,
+      "height": 330,
+      "color": "2"
+    },
+    {
+      "id": "node-ValueObjects-GeneratedReportId",
+      "type": "text",
+      "text": "# GeneratedReportId\n\n`ValueObjects\\GeneratedReportId.cs`\n\n**Kind:** record struct\n\n**Main Methods**\n- New()\n- From()\n- ToString()",
+      "x": 560,
+      "y": -70,
+      "width": 480,
+      "height": 330,
+      "color": "2"
+    },
+    {
+      "id": "node-ValueObjects-GenerationTiming",
+      "type": "text",
+      "text": "# GenerationTiming\n\n`ValueObjects\\GenerationTiming.cs`\n\n**Kind:** class\n**Base:** ValueObject\n\n**Properties**\n- StartedAtUtc\n- CompletedAtUtc\n\n**Main Methods**\n- Start()\n- Complete()",
+      "x": 560,
+      "y": 360,
+      "width": 480,
+      "height": 330,
+      "color": "2"
+    },
+    {
+      "id": "node-ValueObjects-PresetCategory",
+      "type": "text",
+      "text": "# PresetCategory\n\n`ValueObjects\\PresetCategory.cs`\n\n**Kind:** class\n**Base:** ValueObject\n\n**Constants**\n- MaxLength\n\n**Properties**\n- Value\n\n**Main Methods**\n- Create()\n- ToString()",
+      "x": 560,
+      "y": 790,
+      "width": 480,
+      "height": 330,
+      "color": "2"
+    },
+    {
+      "id": "node-ValueObjects-PromptVersion",
+      "type": "text",
+      "text": "# PromptVersion\n\n`ValueObjects\\PromptVersion.cs`\n\n**Kind:** class\n**Base:** ValueObject\n\n**Constants**\n- MaxLength\n\n**Properties**\n- Value\n\n**Main Methods**\n- Create()\n- ToString()",
+      "x": 1080,
+      "y": -500,
+      "width": 480,
+      "height": 330,
+      "color": "2"
+    },
+    {
+      "id": "node-ValueObjects-QualityWarning",
+      "type": "text",
+      "text": "# QualityWarning\n\n`ValueObjects\\QualityWarning.cs`\n\n**Kind:** class\n**Base:** ValueObject\n\n**Constants**\n- MaxMessageLength\n\n**Properties**\n- Code\n- Message\n- Severity\n\n**Main Methods**\n- Create()\n- ToString()",
+      "x": 1080,
+      "y": -70,
+      "width": 480,
+      "height": 330,
+      "color": "2"
+    },
+    {
+      "id": "node-ValueObjects-ReportCitationId",
+      "type": "text",
+      "text": "# ReportCitationId\n\n`ValueObjects\\ReportCitationId.cs`\n\n**Kind:** record struct\n\n**Main Methods**\n- New()\n- From()\n- ToString()",
+      "x": 1080,
+      "y": 360,
+      "width": 480,
+      "height": 330,
+      "color": "2"
+    },
+    {
+      "id": "node-ValueObjects-ReportContent",
+      "type": "text",
+      "text": "# ReportContent\n\n`ValueObjects\\ReportContent.cs`\n\n**Kind:** class\n**Base:** ValueObject\n\n**Constants**\n- MinimumSubstantiveMarkdownLength\n- MaximumSummaryLength\n\n**Properties**\n- Markdown\n- Summary\n\n**Main Methods**\n- Create()",
+      "x": 1080,
+      "y": 790,
+      "width": 480,
+      "height": 330,
+      "color": "2"
+    },
+    {
+      "id": "node-ValueObjects-ReportCriterionId",
+      "type": "text",
+      "text": "# ReportCriterionId\n\n`ValueObjects\\ReportCriterionId.cs`\n\n**Kind:** record struct\n\n**Main Methods**\n- New()\n- From()\n- ToString()",
+      "x": 1600,
+      "y": -500,
+      "width": 480,
+      "height": 330,
+      "color": "2"
+    },
+    {
+      "id": "node-ValueObjects-ReportCriterionName",
+      "type": "text",
+      "text": "# ReportCriterionName\n\n`ValueObjects\\ReportCriterionName.cs`\n\n**Kind:** class\n**Base:** ValueObject\n\n**Constants**\n- MaxLength\n\n**Properties**\n- Value\n\n**Main Methods**\n- Create()\n- ToString()",
+      "x": 1600,
+      "y": -70,
+      "width": 480,
+      "height": 330,
+      "color": "2"
+    },
+    {
+      "id": "node-ValueObjects-ReportExportId",
+      "type": "text",
+      "text": "# ReportExportId\n\n`ValueObjects\\ReportExportId.cs`\n\n**Kind:** record struct\n\n**Main Methods**\n- New()\n- From()\n- ToString()",
+      "x": 1600,
+      "y": 360,
+      "width": 480,
+      "height": 330,
+      "color": "2"
+    },
+    {
+      "id": "node-ValueObjects-ReportGenerationRunId",
+      "type": "text",
+      "text": "# ReportGenerationRunId\n\n`ValueObjects\\ReportGenerationRunId.cs`\n\n**Kind:** record struct\n\n**Main Methods**\n- New()\n- From()\n- ToString()",
+      "x": 1600,
+      "y": 790,
+      "width": 480,
+      "height": 330,
+      "color": "2"
+    },
+    {
+      "id": "node-ValueObjects-ReportQualityScore",
+      "type": "text",
+      "text": "# ReportQualityScore\n\n`ValueObjects\\ReportQualityScore.cs`\n\n**Kind:** class\n**Base:** ValueObject\n\n**Constants**\n- MinValue\n- MaxValue\n- ReadyThreshold\n\n**Properties**\n- Value\n\n**Main Methods**\n- Create()\n- ToString()",
+      "x": 2120,
+      "y": -500,
+      "width": 480,
+      "height": 330,
+      "color": "2"
+    },
+    {
+      "id": "node-ValueObjects-ReportRecommendationId",
+      "type": "text",
+      "text": "# ReportRecommendationId\n\n`ValueObjects\\ReportRecommendationId.cs`\n\n**Kind:** record struct\n\n**Main Methods**\n- New()\n- From()\n- ToString()",
+      "x": 2120,
+      "y": -70,
+      "width": 480,
+      "height": 330,
+      "color": "2"
+    },
+    {
+      "id": "node-ValueObjects-ReportRequestId",
+      "type": "text",
+      "text": "# ReportRequestId\n\n`ValueObjects\\ReportRequestId.cs`\n\n**Kind:** record struct\n\n**Main Methods**\n- New()\n- From()\n- ToString()",
+      "x": 2120,
+      "y": 360,
+      "width": 480,
+      "height": 330,
+      "color": "2"
+    },
+    {
+      "id": "node-ValueObjects-ReportStylePresetId",
+      "type": "text",
+      "text": "# ReportStylePresetId\n\n`ValueObjects\\ReportStylePresetId.cs`\n\n**Kind:** record struct\n\n**Main Methods**\n- New()\n- From()\n- ToString()",
+      "x": 2120,
+      "y": 790,
+      "width": 480,
+      "height": 330,
+      "color": "2"
+    },
+    {
+      "id": "node-ValueObjects-ReportTemplateId",
+      "type": "text",
+      "text": "# ReportTemplateId\n\n`ValueObjects\\ReportTemplateId.cs`\n\n**Kind:** record struct\n\n**Main Methods**\n- New()\n- From()\n- ToString()",
+      "x": 2640,
+      "y": -500,
+      "width": 480,
+      "height": 330,
+      "color": "2"
+    },
+    {
+      "id": "node-ValueObjects-ReportTitle",
+      "type": "text",
+      "text": "# ReportTitle\n\n`ValueObjects\\ReportTitle.cs`\n\n**Kind:** class\n**Base:** ValueObject\n\n**Constants**\n- MaxLength\n\n**Properties**\n- Value\n\n**Main Methods**\n- Create()\n- ToString()",
+      "x": 2640,
+      "y": -70,
+      "width": 480,
+      "height": 330,
+      "color": "2"
+    },
+    {
+      "id": "node-ValueObjects-ReportTopicId",
+      "type": "text",
+      "text": "# ReportTopicId\n\n`ValueObjects\\ReportTopicId.cs`\n\n**Kind:** record struct\n\n**Main Methods**\n- New()\n- From()\n- ToString()",
+      "x": 2640,
+      "y": 360,
+      "width": 480,
+      "height": 330,
+      "color": "2"
+    },
+    {
+      "id": "node-ValueObjects-ReportTopicName",
+      "type": "text",
+      "text": "# ReportTopicName\n\n`ValueObjects\\ReportTopicName.cs`\n\n**Kind:** class\n**Base:** ValueObject\n\n**Constants**\n- MaxLength\n\n**Properties**\n- Value\n\n**Main Methods**\n- Create()\n- ToString()",
+      "x": 2640,
+      "y": 790,
+      "width": 480,
+      "height": 330,
+      "color": "2"
+    },
+    {
+      "id": "node-ValueObjects-SourceUrl",
+      "type": "text",
+      "text": "# SourceUrl\n\n`ValueObjects\\SourceUrl.cs`\n\n**Kind:** class\n**Base:** ValueObject\n\n**Properties**\n- Value\n\n**Main Methods**\n- Create()\n- ToString()",
+      "x": 3160,
+      "y": -500,
+      "width": 480,
+      "height": 330,
+      "color": "2"
+    },
+    {
+      "id": "node-ValueObjects-SuggestedCriterion",
+      "type": "text",
+      "text": "# SuggestedCriterion\n\n`ValueObjects\\SuggestedCriterion.cs`\n\n**Kind:** class\n**Base:** ValueObject\n\n**Constants**\n- MaxDescriptionLength\n\n**Properties**\n- Name\n- Description\n\n**Main Methods**\n- Create()",
+      "x": 3160,
+      "y": -70,
+      "width": 480,
+      "height": 330,
+      "color": "2"
+    },
+    {
+      "id": "node-ValueObjects-SupplementaryNote",
+      "type": "text",
+      "text": "# SupplementaryNote\n\n`ValueObjects\\SupplementaryNote.cs`\n\n**Kind:** class\n**Base:** ValueObject\n\n**Constants**\n- MaxLength\n\n**Properties**\n- Value\n\n**Main Methods**\n- Create()\n- ToString()",
+      "x": 3160,
+      "y": 360,
+      "width": 480,
+      "height": 330,
+      "color": "2"
+    },
+    {
+      "id": "node-ValueObjects-SystemPromptText",
+      "type": "text",
+      "text": "# SystemPromptText\n\n`ValueObjects\\SystemPromptText.cs`\n\n**Kind:** class\n**Base:** ValueObject\n\n**Constants**\n- MaxLength\n\n**Properties**\n- Value\n\n**Main Methods**\n- Create()\n- ToString()",
+      "x": 3160,
+      "y": 790,
+      "width": 480,
+      "height": 330,
+      "color": "2"
+    },
+    {
+      "id": "node-ValueObjects-TargetAudience",
+      "type": "text",
+      "text": "# TargetAudience\n\n`ValueObjects\\TargetAudience.cs`\n\n**Kind:** class\n**Base:** ValueObject\n\n**Constants**\n- MaxLength\n\n**Properties**\n- Value\n\n**Main Methods**\n- Create()\n- ToString()",
+      "x": 3680,
+      "y": -500,
+      "width": 480,
+      "height": 330,
+      "color": "2"
+    },
+    {
+      "id": "node-ValueObjects-TokenUsage",
+      "type": "text",
+      "text": "# TokenUsage\n\n`ValueObjects\\TokenUsage.cs`\n\n**Kind:** class\n**Base:** ValueObject\n\n**Properties**\n- InputTokens\n- OutputTokens\n- Zero\n\n**Main Methods**\n- Create()\n- ToString()",
+      "x": 3680,
+      "y": -70,
+      "width": 480,
+      "height": 330,
+      "color": "2"
+    },
+    {
+      "id": "node-ValueObjects-UserId",
+      "type": "text",
+      "text": "# UserId\n\n`ValueObjects\\UserId.cs`\n\n**Kind:** record struct\n\n**Main Methods**\n- From()\n- ToString()",
+      "x": 3680,
+      "y": 360,
+      "width": 480,
+      "height": 330,
+      "color": "2"
+    },
+    {
+      "id": "node-ValueObjects-UserPromptTemplateText",
+      "type": "text",
+      "text": "# UserPromptTemplateText\n\n`ValueObjects\\UserPromptTemplateText.cs`\n\n**Kind:** class\n**Base:** ValueObject\n\n**Constants**\n- MaxLength\n\n**Properties**\n- Value\n\n**Main Methods**\n- Create()\n- ToString()",
+      "x": 3680,
+      "y": 790,
+      "width": 480,
+      "height": 330,
+      "color": "2"
+    }
+  ],
+  "edges": [
+    {
+      "id": "edge-domain-overview-group-Common",
+      "fromNode": "domain-overview",
+      "fromSide": "right",
+      "toNode": "group-Common",
+      "toSide": "left",
+      "label": "Common"
+    },
+    {
+      "id": "edge-domain-overview-group-Entities",
+      "fromNode": "domain-overview",
+      "fromSide": "right",
+      "toNode": "group-Entities",
+      "toSide": "left",
+      "label": "Entities"
+    },
+    {
+      "id": "edge-domain-overview-group-ValueObjects",
+      "fromNode": "domain-overview",
+      "fromSide": "right",
+      "toNode": "group-ValueObjects",
+      "toSide": "left",
+      "label": "ValueObjects"
+    },
+    {
+      "id": "edge-domain-overview-group-Enums",
+      "fromNode": "domain-overview",
+      "fromSide": "right",
+      "toNode": "group-Enums",
+      "toSide": "left",
+      "label": "Enums"
+    },
+    {
+      "id": "edge-domain-overview-group-Events",
+      "fromNode": "domain-overview",
+      "fromSide": "right",
+      "toNode": "group-Events",
+      "toSide": "left",
+      "label": "Events"
+    },
+    {
+      "id": "edge-domain-overview-group-Errors",
+      "fromNode": "domain-overview",
+      "fromSide": "right",
+      "toNode": "group-Errors",
+      "toSide": "left",
+      "label": "Errors"
+    },
+    {
+      "id": "edge-domain-overview-group-Exceptions",
+      "fromNode": "domain-overview",
+      "fromSide": "right",
+      "toNode": "group-Exceptions",
+      "toSide": "left",
+      "label": "Exceptions"
+    },
+    {
+      "id": "edge-domain-overview-group-Services",
+      "fromNode": "domain-overview",
+      "fromSide": "right",
+      "toNode": "group-Services",
+      "toSide": "left",
+      "label": "Services"
+    },
+    {
+      "id": "edge-group-Common-node-Common-AggregateRoot",
+      "fromNode": "group-Common",
+      "fromSide": "right",
+      "toNode": "node-Common-AggregateRoot",
+      "toSide": "left"
+    },
+    {
+      "id": "edge-group-Common-node-Common-AuditableEntity",
+      "fromNode": "group-Common",
+      "fromSide": "right",
+      "toNode": "node-Common-AuditableEntity",
+      "toSide": "left"
+    },
+    {
+      "id": "edge-group-Common-node-Common-DomainEvent",
+      "fromNode": "group-Common",
+      "fromSide": "right",
+      "toNode": "node-Common-DomainEvent",
+      "toSide": "left"
+    },
+    {
+      "id": "edge-group-Common-node-Common-Entity",
+      "fromNode": "group-Common",
+      "fromSide": "right",
+      "toNode": "node-Common-Entity",
+      "toSide": "left"
+    },
+    {
+      "id": "edge-group-Common-node-Common-IDomainEvent",
+      "fromNode": "group-Common",
+      "fromSide": "right",
+      "toNode": "node-Common-IDomainEvent",
+      "toSide": "left"
+    },
+    {
+      "id": "edge-group-Common-node-Common-SoftDeletableEntity",
+      "fromNode": "group-Common",
+      "fromSide": "right",
+      "toNode": "node-Common-SoftDeletableEntity",
+      "toSide": "left"
+    },
+    {
+      "id": "edge-group-Common-node-Common-ValueObject",
+      "fromNode": "group-Common",
+      "fromSide": "right",
+      "toNode": "node-Common-ValueObject",
+      "toSide": "left"
+    },
+    {
+      "id": "edge-group-Entities-node-Entities-CriteriaPreset",
+      "fromNode": "group-Entities",
+      "fromSide": "right",
+      "toNode": "node-Entities-CriteriaPreset",
+      "toSide": "left"
+    },
+    {
+      "id": "edge-group-Entities-node-Entities-GeneratedReport",
+      "fromNode": "group-Entities",
+      "fromSide": "right",
+      "toNode": "node-Entities-GeneratedReport",
+      "toSide": "left"
+    },
+    {
+      "id": "edge-group-Entities-node-Entities-ReportCitation",
+      "fromNode": "group-Entities",
+      "fromSide": "right",
+      "toNode": "node-Entities-ReportCitation",
+      "toSide": "left"
+    },
+    {
+      "id": "edge-group-Entities-node-Entities-ReportCriterion",
+      "fromNode": "group-Entities",
+      "fromSide": "right",
+      "toNode": "node-Entities-ReportCriterion",
+      "toSide": "left"
+    },
+    {
+      "id": "edge-group-Entities-node-Entities-ReportExport",
+      "fromNode": "group-Entities",
+      "fromSide": "right",
+      "toNode": "node-Entities-ReportExport",
+      "toSide": "left"
+    },
+    {
+      "id": "edge-group-Entities-node-Entities-ReportGenerationRun",
+      "fromNode": "group-Entities",
+      "fromSide": "right",
+      "toNode": "node-Entities-ReportGenerationRun",
+      "toSide": "left"
+    },
+    {
+      "id": "edge-group-Entities-node-Entities-ReportRecommendation",
+      "fromNode": "group-Entities",
+      "fromSide": "right",
+      "toNode": "node-Entities-ReportRecommendation",
+      "toSide": "left"
+    },
+    {
+      "id": "edge-group-Entities-node-Entities-ReportRequest",
+      "fromNode": "group-Entities",
+      "fromSide": "right",
+      "toNode": "node-Entities-ReportRequest",
+      "toSide": "left"
+    },
+    {
+      "id": "edge-group-Entities-node-Entities-ReportStylePreset",
+      "fromNode": "group-Entities",
+      "fromSide": "right",
+      "toNode": "node-Entities-ReportStylePreset",
+      "toSide": "left"
+    },
+    {
+      "id": "edge-group-Entities-node-Entities-ReportTemplate",
+      "fromNode": "group-Entities",
+      "fromSide": "right",
+      "toNode": "node-Entities-ReportTemplate",
+      "toSide": "left"
+    },
+    {
+      "id": "edge-group-Entities-node-Entities-ReportTopic",
+      "fromNode": "group-Entities",
+      "fromSide": "right",
+      "toNode": "node-Entities-ReportTopic",
+      "toSide": "left"
+    },
+    {
+      "id": "edge-group-Enums-node-Enums-AiProviderType",
+      "fromNode": "group-Enums",
+      "fromSide": "right",
+      "toNode": "node-Enums-AiProviderType",
+      "toSide": "left"
+    },
+    {
+      "id": "edge-group-Enums-node-Enums-ExportFormat",
+      "fromNode": "group-Enums",
+      "fromSide": "right",
+      "toNode": "node-Enums-ExportFormat",
+      "toSide": "left"
+    },
+    {
+      "id": "edge-group-Enums-node-Enums-GenerationStatus",
+      "fromNode": "group-Enums",
+      "fromSide": "right",
+      "toNode": "node-Enums-GenerationStatus",
+      "toSide": "left"
+    },
+    {
+      "id": "edge-group-Enums-node-Enums-QualityWarningSeverity",
+      "fromNode": "group-Enums",
+      "fromSide": "right",
+      "toNode": "node-Enums-QualityWarningSeverity",
+      "toSide": "left"
+    },
+    {
+      "id": "edge-group-Enums-node-Enums-RecommendationStrength",
+      "fromNode": "group-Enums",
+      "fromSide": "right",
+      "toNode": "node-Enums-RecommendationStrength",
+      "toSide": "left"
+    },
+    {
+      "id": "edge-group-Enums-node-Enums-ReportLength",
+      "fromNode": "group-Enums",
+      "fromSide": "right",
+      "toNode": "node-Enums-ReportLength",
+      "toSide": "left"
+    },
+    {
+      "id": "edge-group-Enums-node-Enums-ReportMode",
+      "fromNode": "group-Enums",
+      "fromSide": "right",
+      "toNode": "node-Enums-ReportMode",
+      "toSide": "left"
+    },
+    {
+      "id": "edge-group-Enums-node-Enums-ReportRequestStatus",
+      "fromNode": "group-Enums",
+      "fromSide": "right",
+      "toNode": "node-Enums-ReportRequestStatus",
+      "toSide": "left"
+    },
+    {
+      "id": "edge-group-Enums-node-Enums-ReportStatus",
+      "fromNode": "group-Enums",
+      "fromSide": "right",
+      "toNode": "node-Enums-ReportStatus",
+      "toSide": "left"
+    },
+    {
+      "id": "edge-group-Enums-node-Enums-ReportStyle",
+      "fromNode": "group-Enums",
+      "fromSide": "right",
+      "toNode": "node-Enums-ReportStyle",
+      "toSide": "left"
+    },
+    {
+      "id": "edge-group-Enums-node-Enums-TechnicalDepth",
+      "fromNode": "group-Enums",
+      "fromSide": "right",
+      "toNode": "node-Enums-TechnicalDepth",
+      "toSide": "left"
+    },
+    {
+      "id": "edge-group-Errors-node-Errors-DomainError",
+      "fromNode": "group-Errors",
+      "fromSide": "right",
+      "toNode": "node-Errors-DomainError",
+      "toSide": "left"
+    },
+    {
+      "id": "edge-group-Errors-node-Errors-ReportDomainError",
+      "fromNode": "group-Errors",
+      "fromSide": "right",
+      "toNode": "node-Errors-ReportDomainError",
+      "toSide": "left"
+    },
+    {
+      "id": "edge-group-Events-node-Events-ReportDeletedDomainEvent",
+      "fromNode": "group-Events",
+      "fromSide": "right",
+      "toNode": "node-Events-ReportDeletedDomainEvent",
+      "toSide": "left"
+    },
+    {
+      "id": "edge-group-Events-node-Events-ReportExportedDomainEvent",
+      "fromNode": "group-Events",
+      "fromSide": "right",
+      "toNode": "node-Events-ReportExportedDomainEvent",
+      "toSide": "left"
+    },
+    {
+      "id": "edge-group-Events-node-Events-ReportGeneratedDomainEvent",
+      "fromNode": "group-Events",
+      "fromSide": "right",
+      "toNode": "node-Events-ReportGeneratedDomainEvent",
+      "toSide": "left"
+    },
+    {
+      "id": "edge-group-Events-node-Events-ReportGenerationFailedDomainEvent",
+      "fromNode": "group-Events",
+      "fromSide": "right",
+      "toNode": "node-Events-ReportGenerationFailedDomainEvent",
+      "toSide": "left"
+    },
+    {
+      "id": "edge-group-Events-node-Events-ReportGenerationStartedDomainEvent",
+      "fromNode": "group-Events",
+      "fromSide": "right",
+      "toNode": "node-Events-ReportGenerationStartedDomainEvent",
+      "toSide": "left"
+    },
+    {
+      "id": "edge-group-Events-node-Events-ReportRequestCreatedDomainEvent",
+      "fromNode": "group-Events",
+      "fromSide": "right",
+      "toNode": "node-Events-ReportRequestCreatedDomainEvent",
+      "toSide": "left"
+    },
+    {
+      "id": "edge-group-Exceptions-node-Exceptions-DomainException",
+      "fromNode": "group-Exceptions",
+      "fromSide": "right",
+      "toNode": "node-Exceptions-DomainException",
+      "toSide": "left"
+    },
+    {
+      "id": "edge-group-Exceptions-node-Exceptions-InvalidReportRequestException",
+      "fromNode": "group-Exceptions",
+      "fromSide": "right",
+      "toNode": "node-Exceptions-InvalidReportRequestException",
+      "toSide": "left"
+    },
+    {
+      "id": "edge-group-Exceptions-node-Exceptions-InvalidReportStateException",
+      "fromNode": "group-Exceptions",
+      "fromSide": "right",
+      "toNode": "node-Exceptions-InvalidReportStateException",
+      "toSide": "left"
+    },
+    {
+      "id": "edge-group-Exceptions-node-Exceptions-ReportDomainException",
+      "fromNode": "group-Exceptions",
+      "fromSide": "right",
+      "toNode": "node-Exceptions-ReportDomainException",
+      "toSide": "left"
+    },
+    {
+      "id": "edge-group-Services-node-Services-ReportQualityDomainService",
+      "fromNode": "group-Services",
+      "fromSide": "right",
+      "toNode": "node-Services-ReportQualityDomainService",
+      "toSide": "left"
+    },
+    {
+      "id": "edge-group-ValueObjects-node-ValueObjects-ContentType",
+      "fromNode": "group-ValueObjects",
+      "fromSide": "right",
+      "toNode": "node-ValueObjects-ContentType",
+      "toSide": "left"
+    },
+    {
+      "id": "edge-group-ValueObjects-node-ValueObjects-CriteriaPresetId",
+      "fromNode": "group-ValueObjects",
+      "fromSide": "right",
+      "toNode": "node-ValueObjects-CriteriaPresetId",
+      "toSide": "left"
+    },
+    {
+      "id": "edge-group-ValueObjects-node-ValueObjects-CriterionWeight",
+      "fromNode": "group-ValueObjects",
+      "fromSide": "right",
+      "toNode": "node-ValueObjects-CriterionWeight",
+      "toSide": "left"
+    },
+    {
+      "id": "edge-group-ValueObjects-node-ValueObjects-ErrorDetail",
+      "fromNode": "group-ValueObjects",
+      "fromSide": "right",
+      "toNode": "node-ValueObjects-ErrorDetail",
+      "toSide": "left"
+    },
+    {
+      "id": "edge-group-ValueObjects-node-ValueObjects-ExportFileName",
+      "fromNode": "group-ValueObjects",
+      "fromSide": "right",
+      "toNode": "node-ValueObjects-ExportFileName",
+      "toSide": "left"
+    },
+    {
+      "id": "edge-group-ValueObjects-node-ValueObjects-GeneratedReportId",
+      "fromNode": "group-ValueObjects",
+      "fromSide": "right",
+      "toNode": "node-ValueObjects-GeneratedReportId",
+      "toSide": "left"
+    },
+    {
+      "id": "edge-group-ValueObjects-node-ValueObjects-GenerationTiming",
+      "fromNode": "group-ValueObjects",
+      "fromSide": "right",
+      "toNode": "node-ValueObjects-GenerationTiming",
+      "toSide": "left"
+    },
+    {
+      "id": "edge-group-ValueObjects-node-ValueObjects-PresetCategory",
+      "fromNode": "group-ValueObjects",
+      "fromSide": "right",
+      "toNode": "node-ValueObjects-PresetCategory",
+      "toSide": "left"
+    },
+    {
+      "id": "edge-group-ValueObjects-node-ValueObjects-PromptVersion",
+      "fromNode": "group-ValueObjects",
+      "fromSide": "right",
+      "toNode": "node-ValueObjects-PromptVersion",
+      "toSide": "left"
+    },
+    {
+      "id": "edge-group-ValueObjects-node-ValueObjects-QualityWarning",
+      "fromNode": "group-ValueObjects",
+      "fromSide": "right",
+      "toNode": "node-ValueObjects-QualityWarning",
+      "toSide": "left"
+    },
+    {
+      "id": "edge-group-ValueObjects-node-ValueObjects-ReportCitationId",
+      "fromNode": "group-ValueObjects",
+      "fromSide": "right",
+      "toNode": "node-ValueObjects-ReportCitationId",
+      "toSide": "left"
+    },
+    {
+      "id": "edge-group-ValueObjects-node-ValueObjects-ReportContent",
+      "fromNode": "group-ValueObjects",
+      "fromSide": "right",
+      "toNode": "node-ValueObjects-ReportContent",
+      "toSide": "left"
+    },
+    {
+      "id": "edge-group-ValueObjects-node-ValueObjects-ReportCriterionId",
+      "fromNode": "group-ValueObjects",
+      "fromSide": "right",
+      "toNode": "node-ValueObjects-ReportCriterionId",
+      "toSide": "left"
+    },
+    {
+      "id": "edge-group-ValueObjects-node-ValueObjects-ReportCriterionName",
+      "fromNode": "group-ValueObjects",
+      "fromSide": "right",
+      "toNode": "node-ValueObjects-ReportCriterionName",
+      "toSide": "left"
+    },
+    {
+      "id": "edge-group-ValueObjects-node-ValueObjects-ReportExportId",
+      "fromNode": "group-ValueObjects",
+      "fromSide": "right",
+      "toNode": "node-ValueObjects-ReportExportId",
+      "toSide": "left"
+    },
+    {
+      "id": "edge-group-ValueObjects-node-ValueObjects-ReportGenerationRunId",
+      "fromNode": "group-ValueObjects",
+      "fromSide": "right",
+      "toNode": "node-ValueObjects-ReportGenerationRunId",
+      "toSide": "left"
+    },
+    {
+      "id": "edge-group-ValueObjects-node-ValueObjects-ReportQualityScore",
+      "fromNode": "group-ValueObjects",
+      "fromSide": "right",
+      "toNode": "node-ValueObjects-ReportQualityScore",
+      "toSide": "left"
+    },
+    {
+      "id": "edge-group-ValueObjects-node-ValueObjects-ReportRecommendationId",
+      "fromNode": "group-ValueObjects",
+      "fromSide": "right",
+      "toNode": "node-ValueObjects-ReportRecommendationId",
+      "toSide": "left"
+    },
+    {
+      "id": "edge-group-ValueObjects-node-ValueObjects-ReportRequestId",
+      "fromNode": "group-ValueObjects",
+      "fromSide": "right",
+      "toNode": "node-ValueObjects-ReportRequestId",
+      "toSide": "left"
+    },
+    {
+      "id": "edge-group-ValueObjects-node-ValueObjects-ReportStylePresetId",
+      "fromNode": "group-ValueObjects",
+      "fromSide": "right",
+      "toNode": "node-ValueObjects-ReportStylePresetId",
+      "toSide": "left"
+    },
+    {
+      "id": "edge-group-ValueObjects-node-ValueObjects-ReportTemplateId",
+      "fromNode": "group-ValueObjects",
+      "fromSide": "right",
+      "toNode": "node-ValueObjects-ReportTemplateId",
+      "toSide": "left"
+    },
+    {
+      "id": "edge-group-ValueObjects-node-ValueObjects-ReportTitle",
+      "fromNode": "group-ValueObjects",
+      "fromSide": "right",
+      "toNode": "node-ValueObjects-ReportTitle",
+      "toSide": "left"
+    },
+    {
+      "id": "edge-group-ValueObjects-node-ValueObjects-ReportTopicId",
+      "fromNode": "group-ValueObjects",
+      "fromSide": "right",
+      "toNode": "node-ValueObjects-ReportTopicId",
+      "toSide": "left"
+    },
+    {
+      "id": "edge-group-ValueObjects-node-ValueObjects-ReportTopicName",
+      "fromNode": "group-ValueObjects",
+      "fromSide": "right",
+      "toNode": "node-ValueObjects-ReportTopicName",
+      "toSide": "left"
+    },
+    {
+      "id": "edge-group-ValueObjects-node-ValueObjects-SourceUrl",
+      "fromNode": "group-ValueObjects",
+      "fromSide": "right",
+      "toNode": "node-ValueObjects-SourceUrl",
+      "toSide": "left"
+    },
+    {
+      "id": "edge-group-ValueObjects-node-ValueObjects-SuggestedCriterion",
+      "fromNode": "group-ValueObjects",
+      "fromSide": "right",
+      "toNode": "node-ValueObjects-SuggestedCriterion",
+      "toSide": "left"
+    },
+    {
+      "id": "edge-group-ValueObjects-node-ValueObjects-SupplementaryNote",
+      "fromNode": "group-ValueObjects",
+      "fromSide": "right",
+      "toNode": "node-ValueObjects-SupplementaryNote",
+      "toSide": "left"
+    },
+    {
+      "id": "edge-group-ValueObjects-node-ValueObjects-SystemPromptText",
+      "fromNode": "group-ValueObjects",
+      "fromSide": "right",
+      "toNode": "node-ValueObjects-SystemPromptText",
+      "toSide": "left"
+    },
+    {
+      "id": "edge-group-ValueObjects-node-ValueObjects-TargetAudience",
+      "fromNode": "group-ValueObjects",
+      "fromSide": "right",
+      "toNode": "node-ValueObjects-TargetAudience",
+      "toSide": "left"
+    },
+    {
+      "id": "edge-group-ValueObjects-node-ValueObjects-TokenUsage",
+      "fromNode": "group-ValueObjects",
+      "fromSide": "right",
+      "toNode": "node-ValueObjects-TokenUsage",
+      "toSide": "left"
+    },
+    {
+      "id": "edge-group-ValueObjects-node-ValueObjects-UserId",
+      "fromNode": "group-ValueObjects",
+      "fromSide": "right",
+      "toNode": "node-ValueObjects-UserId",
+      "toSide": "left"
+    },
+    {
+      "id": "edge-group-ValueObjects-node-ValueObjects-UserPromptTemplateText",
+      "fromNode": "group-ValueObjects",
+      "fromSide": "right",
+      "toNode": "node-ValueObjects-UserPromptTemplateText",
+      "toSide": "left"
+    },
+    {
+      "id": "rel-ReportRequest-ReportTopic-owns-topics",
+      "fromNode": "node-Entities-ReportRequest",
+      "fromSide": "right",
+      "toNode": "node-Entities-ReportTopic",
+      "toSide": "left",
+      "label": "owns topics"
+    },
+    {
+      "id": "rel-ReportRequest-ReportCriterion-owns-criteria-focus",
+      "fromNode": "node-Entities-ReportRequest",
+      "fromSide": "right",
+      "toNode": "node-Entities-ReportCriterion",
+      "toSide": "left",
+      "label": "owns criteria/focus"
+    },
+    {
+      "id": "rel-ReportRequest-ReportRequestCreatedDomainEvent-raises",
+      "fromNode": "node-Entities-ReportRequest",
+      "fromSide": "right",
+      "toNode": "node-Events-ReportRequestCreatedDomainEvent",
+      "toSide": "left",
+      "label": "raises"
+    },
+    {
+      "id": "rel-GeneratedReport-ReportCitation-owns-citations",
+      "fromNode": "node-Entities-GeneratedReport",
+      "fromSide": "right",
+      "toNode": "node-Entities-ReportCitation",
+      "toSide": "left",
+      "label": "owns citations"
+    },
+    {
+      "id": "rel-GeneratedReport-ReportRecommendation-owns-recommendations",
+      "fromNode": "node-Entities-GeneratedReport",
+      "fromSide": "right",
+      "toNode": "node-Entities-ReportRecommendation",
+      "toSide": "left",
+      "label": "owns recommendations"
+    },
+    {
+      "id": "rel-GeneratedReport-ReportGeneratedDomainEvent-raises",
+      "fromNode": "node-Entities-GeneratedReport",
+      "fromSide": "right",
+      "toNode": "node-Events-ReportGeneratedDomainEvent",
+      "toSide": "left",
+      "label": "raises"
+    },
+    {
+      "id": "rel-GeneratedReport-ReportDeletedDomainEvent-raises",
+      "fromNode": "node-Entities-GeneratedReport",
+      "fromSide": "right",
+      "toNode": "node-Events-ReportDeletedDomainEvent",
+      "toSide": "left",
+      "label": "raises"
+    },
+    {
+      "id": "rel-ReportGenerationRun-ReportGenerationStartedDomainEvent-raises",
+      "fromNode": "node-Entities-ReportGenerationRun",
+      "fromSide": "right",
+      "toNode": "node-Events-ReportGenerationStartedDomainEvent",
+      "toSide": "left",
+      "label": "raises"
+    },
+    {
+      "id": "rel-ReportGenerationRun-ReportGenerationFailedDomainEvent-raises",
+      "fromNode": "node-Entities-ReportGenerationRun",
+      "fromSide": "right",
+      "toNode": "node-Events-ReportGenerationFailedDomainEvent",
+      "toSide": "left",
+      "label": "raises"
+    },
+    {
+      "id": "rel-ReportExport-ReportExportedDomainEvent-raises",
+      "fromNode": "node-Entities-ReportExport",
+      "fromSide": "right",
+      "toNode": "node-Events-ReportExportedDomainEvent",
+      "toSide": "left",
+      "label": "raises"
+    },
+    {
+      "id": "rel-ReportQualityDomainService-GeneratedReport-evaluates",
+      "fromNode": "node-Services-ReportQualityDomainService",
+      "fromSide": "right",
+      "toNode": "node-Entities-GeneratedReport",
+      "toSide": "left",
+      "label": "evaluates"
+    },
+    {
+      "id": "rel-ReportQualityDomainService-ReportMode-mode-aware",
+      "fromNode": "node-Services-ReportQualityDomainService",
+      "fromSide": "right",
+      "toNode": "node-Enums-ReportMode",
+      "toSide": "left",
+      "label": "mode-aware"
+    },
+    {
+      "id": "rel-ReportRequest-ReportMode-selects-mode",
+      "fromNode": "node-Entities-ReportRequest",
+      "fromSide": "right",
+      "toNode": "node-Enums-ReportMode",
+      "toSide": "left",
+      "label": "selects mode"
+    },
+    {
+      "id": "rel-ReportRequest-ReportStyle-uses",
+      "fromNode": "node-Entities-ReportRequest",
+      "fromSide": "right",
+      "toNode": "node-Enums-ReportStyle",
+      "toSide": "left",
+      "label": "uses"
+    },
+    {
+      "id": "rel-ReportRequest-TechnicalDepth-uses",
+      "fromNode": "node-Entities-ReportRequest",
+      "fromSide": "right",
+      "toNode": "node-Enums-TechnicalDepth",
+      "toSide": "left",
+      "label": "uses"
+    },
+    {
+      "id": "rel-ReportRequest-ReportLength-uses",
+      "fromNode": "node-Entities-ReportRequest",
+      "fromSide": "right",
+      "toNode": "node-Enums-ReportLength",
+      "toSide": "left",
+      "label": "uses"
+    },
+    {
+      "id": "rel-GeneratedReport-ReportStatus-sets",
+      "fromNode": "node-Entities-GeneratedReport",
+      "fromSide": "right",
+      "toNode": "node-Enums-ReportStatus",
+      "toSide": "left",
+      "label": "sets"
+    },
+    {
+      "id": "rel-ReportGenerationRun-GenerationStatus-tracks",
+      "fromNode": "node-Entities-ReportGenerationRun",
+      "fromSide": "right",
+      "toNode": "node-Enums-GenerationStatus",
+      "toSide": "left",
+      "label": "tracks"
+    },
+    {
+      "id": "rel-ReportExport-ExportFormat-uses",
+      "fromNode": "node-Entities-ReportExport",
+      "fromSide": "right",
+      "toNode": "node-Enums-ExportFormat",
+      "toSide": "left",
+      "label": "uses"
+    },
+    {
+      "id": "rel-CriteriaPreset-SuggestedCriterion-contains",
+      "fromNode": "node-Entities-CriteriaPreset",
+      "fromSide": "right",
+      "toNode": "node-ValueObjects-SuggestedCriterion",
+      "toSide": "left",
+      "label": "contains"
+    },
+    {
+      "id": "rel-ReportStylePreset-ReportStyle-suggests",
+      "fromNode": "node-Entities-ReportStylePreset",
+      "fromSide": "right",
+      "toNode": "node-Enums-ReportStyle",
+      "toSide": "left",
+      "label": "suggests"
+    },
+    {
+      "id": "rel-ReportTemplate-SystemPromptText-contains",
+      "fromNode": "node-Entities-ReportTemplate",
+      "fromSide": "right",
+      "toNode": "node-ValueObjects-SystemPromptText",
+      "toSide": "left",
+      "label": "contains"
+    },
+    {
+      "id": "rel-ReportTemplate-UserPromptTemplateText-contains",
+      "fromNode": "node-Entities-ReportTemplate",
+      "fromSide": "right",
+      "toNode": "node-ValueObjects-UserPromptTemplateText",
+      "toSide": "left",
+      "label": "contains"
+    }
+  ]
+}
