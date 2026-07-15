@@ -8,8 +8,9 @@ using Domain.ValueObjects;
 namespace Domain.Entities
 {
     /// <summary>
-    /// The user's structured ask: which topics to compare, for whom, in what
-    /// style and depth, using which criteria, plus any optional constraints.
+    /// The user's structured ask: whether to research one topic or compare
+    /// multiple topics, for whom, in what style and depth, using which criteria
+    /// or focus areas, plus any optional constraints.
     ///
     /// A request is mutable only while <see cref="ReportRequestStatus.Draft"/>.
     /// Once <see cref="Submit"/> is called it is frozen — every mutation method
@@ -21,27 +22,33 @@ namespace Domain.Entities
     /// </summary>
     public sealed class ReportRequest : SoftDeletableEntity<ReportRequestId>
     {
-        public const int MinimumTopicCount = 2;
+        public const int MinimumTopicCount = 1;
+        public const int MinimumComparisonTopicCount = 2;
         public const int MaximumTopicCount = 8;
-        public const int MinimumCriterionCount = 2;
+        public const int MinimumComparisonCriterionCount = 2;
 
         private readonly List<ReportTopic> _topics = [];
         private readonly List<ReportCriterion> _criteria = [];
 
-        private ReportRequest(
+        private ReportRequest
+        (
             ReportRequestId id,
             UserId userId,
             ReportTitle title,
             TargetAudience targetAudience,
+            ReportMode reportMode,
             ReportStyle style,
             TechnicalDepth technicalDepth,
             ReportLength reportLength,
-            AiProviderType preferredAiProvider)
-            : base(id)
+            AiProviderType preferredAiProvider
+        ) : base(id)
         {
+            EnsureSupportedReportMode(reportMode);
+
             UserId = userId;
             Title = title;
             TargetAudience = targetAudience;
+            ReportMode = reportMode;
             Style = style;
             TechnicalDepth = technicalDepth;
             ReportLength = reportLength;
@@ -62,6 +69,8 @@ namespace Domain.Entities
         public ReportTitle Title { get; private set; }
 
         public TargetAudience TargetAudience { get; private set; }
+
+        public ReportMode ReportMode { get; private set; }
 
         public ReportStyle Style { get; private set; }
 
@@ -94,51 +103,78 @@ namespace Domain.Entities
         public bool IsDraft => Status == ReportRequestStatus.Draft;
 
         public bool CanSubmit =>
-            IsDraft && _topics.Count >= MinimumTopicCount && _criteria.Count >= MinimumCriterionCount;
+            IsDraft && HasRequiredTopicsForMode() && HasRequiredCriteriaForMode();
 
-        public static ReportRequest Create(
+        public static ReportRequest Create
+        (
             UserId userId,
             ReportTitle title,
             TargetAudience targetAudience,
             ReportStyle style,
             TechnicalDepth technicalDepth,
             ReportLength reportLength,
-            AiProviderType preferredAiProvider = AiProviderType.SystemDefault)
+            AiProviderType preferredAiProvider = AiProviderType.SystemDefault,
+            ReportMode reportMode = ReportMode.Comparison
+        )
         {
             ArgumentNullException.ThrowIfNull(title);
             ArgumentNullException.ThrowIfNull(targetAudience);
 
-            var request = new ReportRequest(
+            var request = new ReportRequest
+            (
                 ReportRequestId.New(),
                 userId,
                 title,
                 targetAudience,
+                reportMode,
                 style,
                 technicalDepth,
                 reportLength,
-                preferredAiProvider);
+                preferredAiProvider
+            );
 
             request.RaiseDomainEvent(new ReportRequestCreatedDomainEvent(request.Id, userId));
 
             return request;
         }
 
-        public void UpdateCoreDetails(
+        public void UpdateCoreDetails
+        (
             ReportTitle title,
             TargetAudience targetAudience,
+            ReportMode reportMode,
             ReportStyle style,
             TechnicalDepth technicalDepth,
-            ReportLength reportLength)
+            ReportLength reportLength
+        )
         {
             EnsureEditable();
             ArgumentNullException.ThrowIfNull(title);
             ArgumentNullException.ThrowIfNull(targetAudience);
+            EnsureSupportedReportMode(reportMode);
 
             Title = title;
             TargetAudience = targetAudience;
+            ReportMode = reportMode;
             Style = style;
             TechnicalDepth = technicalDepth;
             ReportLength = reportLength;
+        }
+
+        public void UpdateCoreDetails
+        (
+            ReportTitle title,
+            TargetAudience targetAudience,
+            ReportStyle style,
+            TechnicalDepth technicalDepth,
+            ReportLength reportLength
+        ) => UpdateCoreDetails(title, targetAudience, ReportMode, style, technicalDepth, reportLength);
+
+        public void UpdateReportMode(ReportMode reportMode)
+        {
+            EnsureEditable();
+            EnsureSupportedReportMode(reportMode);
+            ReportMode = reportMode;
         }
 
         public void UpdatePreferredAiProvider(AiProviderType preferredAiProvider)
@@ -152,14 +188,16 @@ namespace Domain.Entities
         /// "optional constraints" step edits them together. Pass <c>null</c> for
         /// any field the user leaves blank.
         /// </summary>
-        public void UpdateSupplementaryNotes(
+        public void UpdateSupplementaryNotes
+        (
             SupplementaryNote? industryOrDomain,
             SupplementaryNote? currentTechnologyStack,
             SupplementaryNote? performanceRequirements,
             SupplementaryNote? securityRequirements,
             SupplementaryNote? budgetConsiderations,
             SupplementaryNote? mustInclude,
-            SupplementaryNote? mustAvoid)
+            SupplementaryNote? mustAvoid
+        )
         {
             EnsureEditable();
 
@@ -220,20 +258,25 @@ namespace Domain.Entities
             {
                 var topic = _topics.FirstOrDefault(t => t.Id == topicId) ??
                     throw new InvalidReportRequestException(ReportDomainError.ReportRequest.TopicNotFound);
+
                 reordered.Add(topic);
             }
 
             _topics.Clear();
             _topics.AddRange(reordered);
+
             ResequenceTopics();
         }
 
-        public ReportCriterion AddCriterion(
+        public ReportCriterion AddCriterion
+        (
             ReportCriterionName name,
             string? description = null,
-            CriterionWeight? weight = null)
+            CriterionWeight? weight = null
+        )
         {
             EnsureEditable();
+
             ArgumentNullException.ThrowIfNull(name);
 
             if (_criteria.Any(c => c.Name.ComparisonKey == name.ComparisonKey))
@@ -244,6 +287,7 @@ namespace Domain.Entities
 
             var criterion = ReportCriterion.Create(name, description, weight, _criteria.Count);
             _criteria.Add(criterion);
+
             return criterion;
         }
 
@@ -255,6 +299,7 @@ namespace Domain.Entities
                 throw new InvalidReportRequestException(ReportDomainError.ReportRequest.CriterionNotFound);
 
             _criteria.Remove(criterion);
+
             ResequenceCriteria();
         }
 
@@ -277,6 +322,7 @@ namespace Domain.Entities
         public void Submit()
         {
             EnsureEditable();
+            EnsureSupportedReportMode(ReportMode);
 
             if (_topics.Count < MinimumTopicCount)
             {
@@ -284,13 +330,43 @@ namespace Domain.Entities
                     ReportDomainError.ReportRequest.MinimumTopicsRequired(MinimumTopicCount));
             }
 
-            if (_criteria.Count < MinimumCriterionCount)
+            if (ReportMode == ReportMode.Comparison && _topics.Count < MinimumComparisonTopicCount)
             {
                 throw new InvalidReportRequestException(
-                    ReportDomainError.ReportRequest.MinimumCriteriaRequired(MinimumCriterionCount));
+                    ReportDomainError.ReportRequest.MinimumComparisonTopicsRequired(MinimumComparisonTopicCount));
+            }
+
+            if (ReportMode == ReportMode.Comparison && _criteria.Count < MinimumComparisonCriterionCount)
+            {
+                throw new InvalidReportRequestException(
+                    ReportDomainError.ReportRequest.MinimumCriteriaRequired(MinimumComparisonCriterionCount));
             }
 
             Status = ReportRequestStatus.Submitted;
+        }
+
+        private bool HasRequiredTopicsForMode()
+            => ReportMode switch
+            {
+                ReportMode.SingleTopicResearch => _topics.Count >= MinimumTopicCount,
+                ReportMode.Comparison => _topics.Count >= MinimumComparisonTopicCount,
+                _ => false
+            };
+
+        private bool HasRequiredCriteriaForMode()
+            => ReportMode switch
+            {
+                ReportMode.SingleTopicResearch => true,
+                ReportMode.Comparison => _criteria.Count >= MinimumComparisonCriterionCount,
+                _ => false
+            };
+
+        private static void EnsureSupportedReportMode(ReportMode reportMode)
+        {
+            if (reportMode is not (ReportMode.SingleTopicResearch or ReportMode.Comparison))
+            {
+                throw new ArgumentOutOfRangeException(nameof(reportMode), reportMode, "Unsupported report mode.");
+            }
         }
 
         private void EnsureEditable()

@@ -11,89 +11,131 @@ namespace Domain.Errors
     {
         public static class ReportRequest
         {
-            public static DomainError MinimumTopicsRequired(int minimum) => new(
+            public static DomainError MinimumTopicsRequired(int minimum) => new
+            (
                 "ReportRequest.MinimumTopicsRequired",
-                $"A report request must compare at least {minimum} topics.");
+                $"A report request must include at least {minimum} topic."
+            );
 
-            public static DomainError MaximumTopicsExceeded(int maximum) => new(
+            public static DomainError MinimumComparisonTopicsRequired(int minimum) => new
+            (
+                "ReportRequest.MinimumComparisonTopicsRequired",
+                $"A comparison report request must include at least {minimum} topics."
+            );
+
+            public static DomainError MaximumTopicsExceeded(int maximum) => new
+            (
                 "ReportRequest.MaximumTopicsExceeded",
-                $"A report request cannot compare more than {maximum} topics.");
+                $"A report request cannot include more than {maximum} topics."
+            );
 
-            public static DomainError DuplicateTopicName(string name) => new(
+            public static DomainError DuplicateTopicName(string name) => new
+            (
                 "ReportRequest.DuplicateTopicName",
-                $"Topic '{name}' has already been added to this report request.");
+                $"Topic '{name}' has already been added to this report request."
+            );
 
-            public static DomainError TopicNotFound => new(
+            public static DomainError TopicNotFound => new
+            (
                 "ReportRequest.TopicNotFound",
-                "The specified topic does not belong to this report request.");
+                "The specified topic does not belong to this report request."
+            );
 
-            public static DomainError MinimumCriteriaRequired(int minimum) => new(
+            public static DomainError MinimumCriteriaRequired(int minimum) => new
+            (
                 "ReportRequest.MinimumCriteriaRequired",
-                $"A report request must define at least {minimum} comparison criteria.");
+                $"A comparison report request must define at least {minimum} evaluation criteria."
+            );
 
-            public static DomainError DuplicateCriterionName(string name) => new(
+            public static DomainError DuplicateCriterionName(string name) => new
+            (
                 "ReportRequest.DuplicateCriterionName",
-                $"Criterion '{name}' has already been added to this report request.");
+                $"Criterion '{name}' has already been added to this report request."
+            );
 
-            public static DomainError CriterionNotFound => new(
+            public static DomainError CriterionNotFound => new
+            (
                 "ReportRequest.CriterionNotFound",
-                "The specified criterion does not belong to this report request.");
+                "The specified criterion does not belong to this report request."
+            );
 
-            public static DomainError AlreadySubmitted => new(
+            public static DomainError AlreadySubmitted => new
+            (
                 "ReportRequest.AlreadySubmitted",
-                "This report request has already been submitted and can no longer be edited.");
+                "This report request has already been submitted and can no longer be edited."
+            );
         }
 
         public static class GeneratedReport
         {
-            public static DomainError ContentTooShort(int minimumLength) => new(
+            public static DomainError ContentTooShort(int minimumLength) => new
+            (
                 "GeneratedReport.ContentTooShort",
-                $"Generated report content must contain at least {minimumLength} characters of substantive Markdown.");
+                $"Generated report content must contain at least {minimumLength} characters of substantive Markdown."
+            );
 
-            public static DomainError AtLeastOneRecommendationRequired => new(
+            public static DomainError AtLeastOneRecommendationRequired => new
+            (
                 "GeneratedReport.AtLeastOneRecommendationRequired",
-                "A generated report must include at least one scenario-based recommendation.");
+                "A generated report must include at least one scenario-based recommendation."
+            );
 
-            public static DomainError CannotModifyDeletedReport => new(
+            public static DomainError CannotModifyDeletedReport => new
+            (
                 "GeneratedReport.CannotModifyDeletedReport",
-                "This report has been deleted and can no longer be modified.");
+                "This report has been deleted and can no longer be modified."
+            );
 
-            public static DomainError AlreadyDeleted => new(
+            public static DomainError AlreadyDeleted => new
+            (
                 "GeneratedReport.AlreadyDeleted",
-                "This report has already been deleted.");
+                "This report has already been deleted."
+            );
         }
 
         public static class ReportGenerationRun
         {
-            public static DomainError InvalidStatusTransition(string from, string to) => new(
+            public static DomainError InvalidStatusTransition(string from, string to) => new
+            (
                 "ReportGenerationRun.InvalidStatusTransition",
-                $"A generation run cannot move from '{from}' to '{to}'.");
+                $"A generation run cannot move from '{from}' to '{to}'."
+            );
 
-            public static DomainError ConcreteProviderRequired => new(
+            public static DomainError ConcreteProviderRequired => new
+            (
                 "ReportGenerationRun.ConcreteProviderRequired",
-                "A generation run must record the specific AI provider that executed it, not a preference placeholder.");
+                "A generation run must record the specific AI provider that executed it, not a preference placeholder."
+            );
         }
 
         public static class ReportTemplate
         {
-            public static DomainError MissingRequiredPlaceholder(string placeholder) => new(
+            public static DomainError MissingRequiredPlaceholder(string placeholder) => new
+            (
                 "ReportTemplate.MissingRequiredPlaceholder",
-                $"The user prompt template must contain the '{placeholder}' placeholder.");
+                $"The user prompt template must contain the '{placeholder}' placeholder."
+            );
 
-            public static DomainError AlreadyActive => new(
+            public static DomainError AlreadyActive => new
+            (
                 "ReportTemplate.AlreadyActive",
-                "This report template is already active.");
+                "This report template is already active."
+            );
 
-            public static DomainError AlreadyInactive => new(
+            public static DomainError AlreadyInactive => new
+            (
                 "ReportTemplate.AlreadyInactive",
-                "This report template is already inactive.");
+                "This report template is already inactive."
+            );
         }
 
         public static class CriteriaPreset
         {
-            public static DomainError AtLeastOneSuggestedCriterionRequired => new(
+            public static DomainError AtLeastOneSuggestedCriterionRequired => new
+            (
                 "CriteriaPreset.AtLeastOneSuggestedCriterionRequired",
-                "A criteria preset must suggest at least one criterion.");
+                "A criteria preset must suggest at least one criterion."
+            );
         }
     }
 }

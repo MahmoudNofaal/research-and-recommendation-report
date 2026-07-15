@@ -10,11 +10,13 @@ namespace Domain.Events
     /// </summary>
     public sealed class ReportGenerationStartedDomainEvent : DomainEvent
     {
-        public ReportGenerationStartedDomainEvent(
+        public ReportGenerationStartedDomainEvent
+        (
             ReportGenerationRunId reportGenerationRunId,
             ReportRequestId reportRequestId,
             UserId userId,
-            AiProviderType aiProvider)
+            AiProviderType aiProvider
+        )
         {
             ReportGenerationRunId = reportGenerationRunId;
             ReportRequestId = reportRequestId;

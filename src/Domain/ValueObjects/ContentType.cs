@@ -23,8 +23,7 @@ namespace Domain.ValueObjects
             ExportFormat.Markdown => new ContentType("text/markdown"),
             ExportFormat.Html => new ContentType("text/html"),
             ExportFormat.Pdf => new ContentType("application/pdf"),
-            ExportFormat.Docx => new ContentType(
-                "application/vnd.openxmlformats-officedocument.wordprocessingml.document"),
+            ExportFormat.Docx => new ContentType("application/vnd.openxmlformats-officedocument.wordprocessingml.document"),
             _ => throw new ArgumentOutOfRangeException(nameof(format), format, "Unsupported export format.")
         };
 
@@ -33,6 +32,7 @@ namespace Domain.ValueObjects
             yield return Value;
         }
 
-        public override string ToString() => Value;
+        public override string ToString()
+            => Value;
     }
 }

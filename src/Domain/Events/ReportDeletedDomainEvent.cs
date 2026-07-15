@@ -9,10 +9,12 @@ namespace Domain.Events
     /// </summary>
     public sealed class ReportDeletedDomainEvent : DomainEvent
     {
-        public ReportDeletedDomainEvent(
+        public ReportDeletedDomainEvent
+        (
             GeneratedReportId generatedReportId,
             ReportRequestId reportRequestId,
-            UserId userId)
+            UserId userId
+        )
         {
             GeneratedReportId = generatedReportId;
             ReportRequestId = reportRequestId;

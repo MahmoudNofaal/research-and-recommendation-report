@@ -38,17 +38,21 @@ namespace Domain.ValueObjects
             var trimmed = value.Trim();
             if (trimmed.Length > MaxLength)
             {
-                throw new ArgumentOutOfRangeException(
+                throw new ArgumentOutOfRangeException
+                (
                     nameof(value),
-                    $"User prompt template cannot exceed {MaxLength} characters.");
+                    $"User prompt template cannot exceed {MaxLength} characters."
+                );
             }
 
             foreach (var placeholder in RequiredPlaceholders)
             {
                 if (!trimmed.Contains(placeholder, StringComparison.Ordinal))
                 {
-                    throw new InvalidReportStateException(
-                        ReportDomainError.ReportTemplate.MissingRequiredPlaceholder(placeholder));
+                    throw new InvalidReportStateException
+                    (
+                        ReportDomainError.ReportTemplate.MissingRequiredPlaceholder(placeholder)
+                    );
                 }
             }
 
@@ -60,6 +64,7 @@ namespace Domain.ValueObjects
             yield return Value;
         }
 
-        public override string ToString() => Value;
+        public override string ToString()
+            => Value;
     }
 }

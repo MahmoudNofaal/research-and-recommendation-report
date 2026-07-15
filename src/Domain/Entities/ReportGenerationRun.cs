@@ -31,7 +31,8 @@ namespace Domain.Entities
         public const int MaxPromptTextLength = 10_000;
         public const int MaxRawResponseLength = 20_000;
 
-        private ReportGenerationRun(
+        private ReportGenerationRun
+        (
             ReportGenerationRunId id,
             ReportRequestId reportRequestId,
             GeneratedReportId generatedReportId,
@@ -39,8 +40,8 @@ namespace Domain.Entities
             AiProviderType aiProvider,
             string modelName,
             PromptVersion promptVersion,
-            string promptText)
-            : base(id)
+            string promptText
+        ) : base(id)
         {
             ReportRequestId = reportRequestId;
             GeneratedReportId = generatedReportId;
@@ -85,14 +86,16 @@ namespace Domain.Entities
 
         public ErrorDetail? ErrorDetail { get; private set; }
 
-        public static ReportGenerationRun Create(
+        public static ReportGenerationRun Create
+        (
             ReportRequestId reportRequestId,
             GeneratedReportId generatedReportId,
             UserId userId,
             AiProviderType aiProvider,
             string modelName,
             PromptVersion promptVersion,
-            string promptText)
+            string promptText
+        )
         {
             if (!aiProvider.IsConcreteProvider())
             {
@@ -106,20 +109,25 @@ namespace Domain.Entities
             var trimmedModelName = modelName.Trim();
             if (trimmedModelName.Length > MaxModelNameLength)
             {
-                throw new ArgumentOutOfRangeException(
+                throw new ArgumentOutOfRangeException
+                (
                     nameof(modelName),
-                    $"Model name cannot exceed {MaxModelNameLength} characters.");
+                    $"Model name cannot exceed {MaxModelNameLength} characters."
+                );
             }
 
             var trimmedPromptText = promptText.Trim();
             if (trimmedPromptText.Length > MaxPromptTextLength)
             {
-                throw new ArgumentOutOfRangeException(
+                throw new ArgumentOutOfRangeException
+                (
                     nameof(promptText),
-                    $"Prompt text cannot exceed {MaxPromptTextLength} characters.");
+                    $"Prompt text cannot exceed {MaxPromptTextLength} characters."
+                );
             }
 
-            return new ReportGenerationRun(
+            return new ReportGenerationRun
+            (
                 ReportGenerationRunId.New(),
                 reportRequestId,
                 generatedReportId,
@@ -127,7 +135,8 @@ namespace Domain.Entities
                 aiProvider,
                 trimmedModelName,
                 promptVersion,
-                trimmedPromptText);
+                trimmedPromptText
+            );
         }
 
         /// <summary>
@@ -142,7 +151,16 @@ namespace Domain.Entities
             Timing = GenerationTiming.Start(startedAtUtc);
             Status = GenerationStatus.InProgress;
 
-            RaiseDomainEvent(new ReportGenerationStartedDomainEvent(Id, ReportRequestId, UserId, AiProvider));
+            RaiseDomainEvent
+            (
+                new ReportGenerationStartedDomainEvent
+                (
+                    Id,
+                    ReportRequestId,
+                    UserId,
+                    AiProvider
+                )
+            );
         }
 
         public void Succeed(string rawResponse, TokenUsage tokenUsage, DateTime completedAtUtc)
@@ -154,9 +172,11 @@ namespace Domain.Entities
             var trimmedResponse = rawResponse.Trim();
             if (trimmedResponse.Length > MaxRawResponseLength)
             {
-                throw new ArgumentOutOfRangeException(
+                throw new ArgumentOutOfRangeException
+                (
                     nameof(rawResponse),
-                    $"Raw response cannot exceed {MaxRawResponseLength} characters.");
+                    $"Raw response cannot exceed {MaxRawResponseLength} characters."
+                );
             }
 
             RawResponse = trimmedResponse;
@@ -176,14 +196,21 @@ namespace Domain.Entities
         {
             if (Status is not (GenerationStatus.Pending or GenerationStatus.InProgress))
             {
-                throw new InvalidReportStateException(
-                    ReportDomainError.ReportGenerationRun.InvalidStatusTransition(Status.ToString(), GenerationStatus.Failed.ToString()));
+                throw new InvalidReportStateException
+                (
+                    ReportDomainError.ReportGenerationRun.InvalidStatusTransition
+                    (
+                        Status.ToString(),
+                        GenerationStatus.Failed.ToString()
+                    )
+                );
             }
 
             ArgumentNullException.ThrowIfNull(errorDetail);
 
             ErrorDetail = errorDetail;
-            Timing = Timing?.Complete(completedAtUtc) ?? GenerationTiming.Start(completedAtUtc).Complete(completedAtUtc);
+            Timing = Timing?.Complete(completedAtUtc)
+                ?? GenerationTiming.Start(completedAtUtc).Complete(completedAtUtc);
             Status = GenerationStatus.Failed;
 
             RaiseDomainEvent(new ReportGenerationFailedDomainEvent(Id, ReportRequestId, UserId, errorDetail));
@@ -193,8 +220,14 @@ namespace Domain.Entities
         {
             if (Status != required)
             {
-                throw new InvalidReportStateException(
-                    ReportDomainError.ReportGenerationRun.InvalidStatusTransition(Status.ToString(), required.ToString()));
+                throw new InvalidReportStateException
+                (
+                    ReportDomainError.ReportGenerationRun.InvalidStatusTransition
+                    (
+                        Status.ToString(),
+                        required.ToString()
+                    )
+                );
             }
         }
     }

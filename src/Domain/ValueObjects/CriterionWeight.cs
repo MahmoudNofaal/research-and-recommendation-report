@@ -3,8 +3,8 @@ using Domain.Common;
 namespace Domain.ValueObjects
 {
     /// <summary>
-    /// The relative importance of a comparison criterion within the decision
-    /// matrix, on a fixed 1–10 scale so weights stay comparable across requests.
+    /// The relative importance of an evaluation criterion or research focus area,
+    /// on a fixed 1–10 scale so weights stay comparable across requests.
     /// </summary>
     public sealed class CriterionWeight : ValueObject
     {
@@ -23,15 +23,18 @@ namespace Domain.ValueObjects
         {
             if (value < MinValue || value > MaxValue)
             {
-                throw new ArgumentOutOfRangeException(
+                throw new ArgumentOutOfRangeException
+                (
                     nameof(value),
-                    $"Criterion weight must be between {MinValue} and {MaxValue}.");
+                    $"Criterion weight must be between {MinValue} and {MaxValue}."
+                );
             }
 
             return new CriterionWeight(value);
         }
 
-        public static CriterionWeight Default() => new(DefaultValue);
+        public static CriterionWeight Default()
+            => new(DefaultValue);
 
         protected override IEnumerable<object?> GetEqualityComponents()
         {

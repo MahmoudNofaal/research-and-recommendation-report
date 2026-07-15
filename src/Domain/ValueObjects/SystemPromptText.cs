@@ -25,9 +25,11 @@ namespace Domain.ValueObjects
             var trimmed = value.Trim();
             if (trimmed.Length > MaxLength)
             {
-                throw new ArgumentOutOfRangeException(
+                throw new ArgumentOutOfRangeException
+                (
                     nameof(value),
-                    $"System prompt text cannot exceed {MaxLength} characters.");
+                    $"System prompt text cannot exceed {MaxLength} characters."
+                );
             }
 
             return new SystemPromptText(trimmed);

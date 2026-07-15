@@ -35,9 +35,11 @@ namespace Domain.ValueObjects
             var trimmedMessage = message.Trim();
             if (trimmedMessage.Length > MaxMessageLength)
             {
-                throw new ArgumentOutOfRangeException(
+                throw new ArgumentOutOfRangeException
+                (
                     nameof(message),
-                    $"Quality warning message cannot exceed {MaxMessageLength} characters.");
+                    $"Quality warning message cannot exceed {MaxMessageLength} characters."
+                );
             }
 
             return new QualityWarning(code.Trim(), trimmedMessage, severity);
@@ -50,6 +52,7 @@ namespace Domain.ValueObjects
             yield return Severity;
         }
 
-        public override string ToString() => $"[{Severity}] {Code}: {Message}";
+        public override string ToString()
+            => $"[{Severity}] {Code}: {Message}";
     }
 }

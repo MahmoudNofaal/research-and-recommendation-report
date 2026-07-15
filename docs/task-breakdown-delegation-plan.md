@@ -2,7 +2,7 @@
 
 ## Project Context
 
-The project is a working ASP.NET Core MVC application that helps users generate intelligent research and recommendation reports. Users can choose topics to compare, set report preferences, preview the generated report, and download it in Markdown, PDF, DOCX, and HTML formats.
+The project is a working ASP.NET Core MVC application that helps users generate intelligent research and recommendation reports. Users can generate either a single-topic research report or a multi-topic comparison report, set report preferences, preview the generated report, and download it in Markdown, PDF, DOCX, and HTML formats.
 
 The project is intended to demonstrate strong .NET architecture and practical AI integration, not just produce a single static report.
 
@@ -182,7 +182,7 @@ Shared collaboration. AI helps implement and refine provider integration, while 
 
 **Task**
 
-Build the workflow that turns user inputs into a structured report with sections such as executive summary, topic explanations, comparison table, decision matrix, recommendations, risks, implementation notes, and references.
+Build the workflow that turns user inputs into a structured report. For single-topic reports, this includes sections such as executive summary, topic overview, key concepts, visual explanation, use cases, risks, best practices, implementation notes, and references. For comparison reports, this includes topic explanations, comparison table, decision matrix, recommendations, risks, implementation notes, and references.
 
 **Skills, Knowledge, or AI Capabilities Needed**
 
@@ -196,7 +196,7 @@ Build the workflow that turns user inputs into a structured report with sections
 
 **Uniquely Human Strengths**
 
-- Defining what "smart comparison" means
+- Defining what "useful research" and "smart comparison" mean
 - Judging clarity for a reader who does not know the topic
 - Deciding when the report is too shallow, too verbose, or too technical
 - Ensuring recommendations are practical, not generic
@@ -205,7 +205,7 @@ Build the workflow that turns user inputs into a structured report with sections
 
 - Drafting report sections
 - Explaining unfamiliar technologies
-- Generating comparison tables
+- Generating visual explanations, research summaries, and comparison tables
 - Suggesting decision criteria
 - Rewriting content for different audiences
 
@@ -464,7 +464,7 @@ AI can scaffold and suggest structure. Human should approve scope, architecture,
 ### Phase 2: Core Report Workflow
 
 1. Build create-report form.
-2. Capture topics, target audience, style, depth, criteria, output preferences, and optional constraints.
+2. Capture report mode, topic or topics, target audience, style, depth, research focus areas or criteria, output preferences, and optional constraints.
 3. Save report request data.
 4. Build report preview page.
 5. Build report history page.
@@ -502,7 +502,7 @@ AI can recommend libraries and write export services. Human should inspect expor
 ### Phase 5: Quality, Testing, and Polish
 
 1. Test authentication and user-owned report access.
-2. Test report generation with several topic sets.
+2. Test report generation with both single-topic prompts and multi-topic comparison sets.
 3. Test AI failure and empty-response cases.
 4. Test all export formats.
 5. Improve UI labels, validation, and error messages.

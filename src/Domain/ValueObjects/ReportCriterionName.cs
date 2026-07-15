@@ -3,9 +3,10 @@ using Domain.Common;
 namespace Domain.ValueObjects
 {
     /// <summary>
-    /// The name of a single comparison criterion (for example, "Latency" or
-    /// "Ease of implementation"). Shared between <c>ReportCriterion</c> and
-    /// <c>SuggestedCriterion</c>, which both name criteria the same way.
+    /// The name of a single evaluation criterion or research focus area (for
+    /// example, "Latency", "Ease of implementation", or "Learning Path").
+    /// Shared between <c>ReportCriterion</c> and <c>SuggestedCriterion</c>, which
+    /// both name these report inputs the same way.
     /// </summary>
     public sealed class ReportCriterionName : ValueObject
     {
@@ -25,9 +26,11 @@ namespace Domain.ValueObjects
             var trimmed = value.Trim();
             if (trimmed.Length > MaxLength)
             {
-                throw new ArgumentOutOfRangeException(
+                throw new ArgumentOutOfRangeException
+                (
                     nameof(value),
-                    $"Criterion name cannot exceed {MaxLength} characters.");
+                    $"Criterion name cannot exceed {MaxLength} characters."
+                );
             }
 
             return new ReportCriterionName(trimmed);
@@ -37,13 +40,15 @@ namespace Domain.ValueObjects
         /// Case-insensitive equality key used by the aggregate to detect duplicate
         /// criteria regardless of casing differences a user might type.
         /// </summary>
-        public string ComparisonKey => Value.ToUpperInvariant();
+        public string ComparisonKey
+            => Value.ToUpperInvariant();
 
         protected override IEnumerable<object?> GetEqualityComponents()
         {
             yield return Value;
         }
 
-        public override string ToString() => Value;
+        public override string ToString()
+            => Value;
     }
 }

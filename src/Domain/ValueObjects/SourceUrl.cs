@@ -26,9 +26,11 @@ namespace Domain.ValueObjects
 
             if (!isWellFormed)
             {
-                throw new ArgumentException(
+                throw new ArgumentException
+                (
                     "Source URL must be a well-formed absolute http or https URI.",
-                    nameof(value));
+                    nameof(value)
+                );
             }
 
             return new SourceUrl(uri!);
@@ -39,6 +41,7 @@ namespace Domain.ValueObjects
             yield return Value;
         }
 
-        public override string ToString() => Value.ToString();
+        public override string ToString()
+            => Value.ToString();
     }
 }

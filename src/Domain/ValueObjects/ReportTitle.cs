@@ -24,9 +24,11 @@ namespace Domain.ValueObjects
             var trimmed = value.Trim();
             if (trimmed.Length > MaxLength)
             {
-                throw new ArgumentOutOfRangeException(
+                throw new ArgumentOutOfRangeException
+                (
                     nameof(value),
-                    $"Report title cannot exceed {MaxLength} characters.");
+                    $"Report title cannot exceed {MaxLength} characters."
+                );
             }
 
             return new ReportTitle(trimmed);
@@ -37,6 +39,7 @@ namespace Domain.ValueObjects
             yield return Value;
         }
 
-        public override string ToString() => Value;
+        public override string ToString()
+            => Value;
     }
 }

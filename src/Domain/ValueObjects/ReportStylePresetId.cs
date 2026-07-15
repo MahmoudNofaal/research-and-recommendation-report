@@ -5,10 +5,13 @@ namespace Domain.ValueObjects
     /// </summary>
     public readonly record struct ReportStylePresetId(Guid Value)
     {
-        public static ReportStylePresetId New() => new(Guid.NewGuid());
+        public static ReportStylePresetId New()
+            => new(Guid.NewGuid());
 
-        public static ReportStylePresetId From(Guid value) => new(value);
+        public static ReportStylePresetId From(Guid value)
+            => new(value);
 
-        public override string ToString() => Value.ToString();
+        public override string ToString()
+            => Value.ToString();
     }
 }

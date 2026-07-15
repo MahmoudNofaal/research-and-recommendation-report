@@ -9,7 +9,8 @@ namespace Domain.Common
     {
         protected abstract IEnumerable<object?> GetEqualityComponents();
 
-        public override bool Equals(object? obj) => Equals(obj as ValueObject);
+        public override bool Equals(object? obj)
+            => Equals(obj as ValueObject);
 
         public bool Equals(ValueObject? other)
         {
@@ -21,12 +22,13 @@ namespace Domain.Common
             return GetEqualityComponents().SequenceEqual(other.GetEqualityComponents());
         }
 
-        public override int GetHashCode() =>
-            GetEqualityComponents().Aggregate(0, (hash, component) => HashCode.Combine(hash, component));
+        public override int GetHashCode()
+            => GetEqualityComponents().Aggregate(0, (hash, component) => HashCode.Combine(hash, component));
 
-        public static bool operator ==(ValueObject? left, ValueObject? right) =>
-            left is null ? right is null : left.Equals(right);
+        public static bool operator ==(ValueObject? left, ValueObject? right)
+            => left is null ? right is null : left.Equals(right);
 
-        public static bool operator !=(ValueObject? left, ValueObject? right) => !(left == right);
+        public static bool operator !=(ValueObject? left, ValueObject? right)
+            => !(left == right);
     }
 }

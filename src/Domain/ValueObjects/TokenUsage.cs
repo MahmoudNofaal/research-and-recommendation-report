@@ -43,6 +43,7 @@ namespace Domain.ValueObjects
             yield return OutputTokens;
         }
 
-        public override string ToString() => $"{InputTokens} in / {OutputTokens} out ({Total} total)";
+        public override string ToString()
+            => $"{InputTokens} in / {OutputTokens} out ({Total} total)";
     }
 }

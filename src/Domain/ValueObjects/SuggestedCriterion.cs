@@ -3,11 +3,11 @@ using Domain.Common;
 namespace Domain.ValueObjects
 {
     /// <summary>
-    /// A single criterion suggested by a <c>CriteriaPreset</c>: a name paired
-    /// with a short explanation of why it matters. Modeled as a value object
-    /// rather than a child entity because a suggestion has no identity or
-    /// lifecycle of its own — a preset's suggestions are simply replaced whole
-    /// when the preset is edited.
+    /// A single suggested criterion or research focus area from a
+    /// <c>CriteriaPreset</c>: a name paired with a short explanation of why it
+    /// matters. Modeled as a value object rather than a child entity because a
+    /// suggestion has no identity or lifecycle of its own — a preset's
+    /// suggestions are simply replaced whole when the preset is edited.
     /// </summary>
     public sealed class SuggestedCriterion : ValueObject
     {
@@ -31,9 +31,11 @@ namespace Domain.ValueObjects
             var trimmed = description.Trim();
             if (trimmed.Length > MaxDescriptionLength)
             {
-                throw new ArgumentOutOfRangeException(
+                throw new ArgumentOutOfRangeException
+                (
                     nameof(description),
-                    $"Suggested criterion description cannot exceed {MaxDescriptionLength} characters.");
+                    $"Suggested criterion description cannot exceed {MaxDescriptionLength} characters."
+                );
             }
 
             return new SuggestedCriterion(name, trimmed);

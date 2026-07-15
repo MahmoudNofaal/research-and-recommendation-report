@@ -13,12 +13,14 @@ namespace Domain.Events
     /// </summary>
     public sealed class ReportGeneratedDomainEvent : DomainEvent
     {
-        public ReportGeneratedDomainEvent(
+        public ReportGeneratedDomainEvent
+        (
             GeneratedReportId generatedReportId,
             ReportRequestId reportRequestId,
             UserId userId,
             int version,
-            ReportStatus status)
+            ReportStatus status
+        )
         {
             GeneratedReportId = generatedReportId;
             ReportRequestId = reportRequestId;

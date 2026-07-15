@@ -29,9 +29,11 @@ namespace Domain.ValueObjects
             var trimmed = baseFileName.Trim();
             if (trimmed.IndexOfAny(InvalidFileNameChars) >= 0)
             {
-                throw new ArgumentException(
+                throw new ArgumentException
+                (
                     "Export file name contains characters that are not valid in a file name.",
-                    nameof(baseFileName));
+                    nameof(baseFileName)
+                );
             }
 
             var expectedExtension = ExtensionFor(format);
@@ -56,6 +58,7 @@ namespace Domain.ValueObjects
             yield return Value;
         }
 
-        public override string ToString() => Value;
+        public override string ToString()
+            => Value;
     }
 }

@@ -4,20 +4,23 @@ using Domain.ValueObjects;
 namespace Domain.Entities
 {
     /// <summary>
-    /// A single comparison criterion within a <c>ReportRequest</c> (for example,
-    /// "Latency", weighted 8/10). Owned exclusively by its parent request.
+    /// A single evaluation criterion or research focus area within a
+    /// <c>ReportRequest</c> (for example, "Latency" for comparison reports or
+    /// "Implementation Steps" for single-topic research). Owned exclusively by
+    /// its parent request.
     /// </summary>
     public sealed class ReportCriterion : Entity<ReportCriterionId>
     {
         public const int MaxDescriptionLength = 1000;
 
-        private ReportCriterion(
+        private ReportCriterion
+        (
             ReportCriterionId id,
             ReportCriterionName name,
             string? description,
             CriterionWeight weight,
-            int sortOrder)
-            : base(id)
+            int sortOrder
+        ) : base(id)
         {
             Name = name;
             Description = description;
@@ -41,20 +44,32 @@ namespace Domain.Entities
 
         public int SortOrder { get; private set; }
 
-        internal static ReportCriterion Create(
+        internal static ReportCriterion Create
+        (
             ReportCriterionName name,
             string? description,
             CriterionWeight? weight,
-            int sortOrder) =>
-            new(ReportCriterionId.New(), name, NormalizeDescription(description), weight ?? CriterionWeight.Default(), sortOrder);
+            int sortOrder
+        ) => new
+        (
+            ReportCriterionId.New(),
+            name,
+            NormalizeDescription(description),
+            weight ?? CriterionWeight.Default(),
+            sortOrder
+        );
 
-        internal void Rename(ReportCriterionName name) => Name = name;
+        internal void Rename(ReportCriterionName name)
+            => Name = name;
 
-        internal void UpdateDescription(string? description) => Description = NormalizeDescription(description);
+        internal void UpdateDescription(string? description)
+            => Description = NormalizeDescription(description);
 
-        internal void UpdateWeight(CriterionWeight weight) => Weight = weight;
+        internal void UpdateWeight(CriterionWeight weight)
+            => Weight = weight;
 
-        internal void UpdateSortOrder(int sortOrder) => SortOrder = sortOrder;
+        internal void UpdateSortOrder(int sortOrder)
+            => SortOrder = sortOrder;
 
         private static string? NormalizeDescription(string? description)
         {
@@ -66,9 +81,11 @@ namespace Domain.Entities
             var trimmed = description.Trim();
             if (trimmed.Length > MaxDescriptionLength)
             {
-                throw new ArgumentOutOfRangeException(
+                throw new ArgumentOutOfRangeException
+                (
                     nameof(description),
-                    $"Criterion description cannot exceed {MaxDescriptionLength} characters.");
+                    $"Criterion description cannot exceed {MaxDescriptionLength} characters."
+                );
             }
 
             return trimmed;

@@ -37,9 +37,11 @@ namespace Domain.ValueObjects
             var trimmedSummary = summary.Trim();
             if (trimmedSummary.Length > MaximumSummaryLength)
             {
-                throw new ArgumentOutOfRangeException(
+                throw new ArgumentOutOfRangeException
+                (
                     nameof(summary),
-                    $"Summary cannot exceed {MaximumSummaryLength} characters.");
+                    $"Summary cannot exceed {MaximumSummaryLength} characters."
+                );
             }
 
             return new ReportContent(markdown.Trim(), trimmedSummary);

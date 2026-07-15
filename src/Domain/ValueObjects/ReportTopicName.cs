@@ -3,9 +3,9 @@ using Domain.Common;
 namespace Domain.ValueObjects
 {
     /// <summary>
-    /// The name of a single topic being compared within a report request (for
-    /// example, "ASP.NET Core SignalR"). Uniqueness within a request is enforced
-    /// by the <c>ReportRequest</c> aggregate, not by this value object.
+    /// The name of a single research or comparison topic within a report request
+    /// (for example, "ASP.NET Core SignalR"). Uniqueness within a request is
+    /// enforced by the <c>ReportRequest</c> aggregate, not by this value object.
     /// </summary>
     public sealed class ReportTopicName : ValueObject
     {
@@ -25,9 +25,11 @@ namespace Domain.ValueObjects
             var trimmed = value.Trim();
             if (trimmed.Length > MaxLength)
             {
-                throw new ArgumentOutOfRangeException(
+                throw new ArgumentOutOfRangeException
+                (
                     nameof(value),
-                    $"Topic name cannot exceed {MaxLength} characters.");
+                    $"Topic name cannot exceed {MaxLength} characters."
+                );
             }
 
             return new ReportTopicName(trimmed);
@@ -44,6 +46,7 @@ namespace Domain.ValueObjects
             yield return Value;
         }
 
-        public override string ToString() => Value;
+        public override string ToString()
+            => Value;
     }
 }

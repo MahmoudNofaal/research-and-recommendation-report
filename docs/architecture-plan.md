@@ -6,7 +6,7 @@ Research Report Generator
 
 ## Purpose
 
-Build a professional ASP.NET Core MVC application that allows authenticated users to generate intelligent research and recommendation reports. Users can choose topics, audience, style, depth, criteria, and constraints, then preview and export reports in Markdown, HTML, PDF, and DOCX.
+Build a professional ASP.NET Core MVC application that allows authenticated users to generate intelligent research and recommendation reports. Users can choose a report mode, topic or topics, audience, style, depth, criteria or research focus areas, and constraints, then preview and export reports in Markdown, HTML, PDF, and DOCX.
 
 The application should feel like the foundation of a real product, not a small demo. It should demonstrate strong Clean Architecture, practical AI integration, thoughtful user flows, and disciplined separation between Domain, Application, Infrastructure, and Web layers.
 
@@ -290,6 +290,7 @@ research-and-recommendation-report/
         ExportFormat.cs
         GenerationStatus.cs
         RecommendationStrength.cs
+        ReportMode.cs
         ReportLength.cs
         ReportStatus.cs
         ReportStyle.cs
@@ -783,9 +784,11 @@ Represents the user's original request.
 
 Responsibilities:
 
-- Own report title, audience, style, depth, length, and constraints.
-- Require at least two topics.
-- Require meaningful criteria.
+- Own report mode, report title, audience, style, depth, length, and constraints.
+- Support single-topic research reports and multi-topic comparison reports.
+- Require at least one topic.
+- Require meaningful criteria for comparison reports.
+- Allow optional research focus areas for single-topic reports.
 - Track status changes.
 - Raise domain events when created or deleted.
 
@@ -830,6 +833,7 @@ Responsibilities:
 
 - `CreateReportRequestCommand`
 - Saves the user's structured report request.
+- Supports both single-topic research and multi-topic comparison modes.
 
 ### Report Generation
 
@@ -1003,11 +1007,12 @@ Implemented by:
 3. Web renders guided wizard.
 4. Wizard sections:
    - Report goal and title
+   - Report mode
    - Topics
    - Audience
    - Style
    - Depth and length
-   - Criteria
+   - Research focus areas or comparison criteria
    - Optional constraints
    - Review
 
@@ -1017,7 +1022,7 @@ Implemented by:
 2. Browser calls `PresetsController`.
 3. Controller sends suggestion query.
 4. Application uses pure suggestion policies and preset readers.
-5. UI shows suggested criteria, style, and depth.
+5. UI shows suggested research focus areas or comparison criteria, style, and depth.
 
 ### Flow 7: User Submits Report Request
 
@@ -1140,6 +1145,7 @@ ReportStylePresets
 ReportRequests
   Id
   UserId
+  ReportMode
   Title
   TargetAudience
   ReportStyle
@@ -1566,11 +1572,12 @@ Core features:
 - Login
 - Dashboard
 - Guided report creation wizard
+- Single-topic research reports
 - Topic comparison
 - Audience selection
 - Style selection
 - Depth selection
-- Criteria selection
+- Research focus or criteria selection
 - Optional constraints
 - AI generation
 - Preview

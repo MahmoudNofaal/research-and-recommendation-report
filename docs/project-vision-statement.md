@@ -2,7 +2,7 @@
 
 ## Vision
 
-Build a working **ASP.NET Core MVC** web application that enables users to generate intelligent research and recommendation reports by selecting topics to compare, configuring report preferences, and exporting the results in multiple formats.
+Build a working **ASP.NET Core MVC** web application that enables users to generate intelligent research and recommendation reports from either a single research topic or multiple topics to compare, configure report preferences, and export the results in multiple formats.
 
 The application should demonstrate:
 
@@ -15,9 +15,10 @@ The application should demonstrate:
 The application will use free-tier AI providers such as **Groq** or **Gemini** and help users:
 
 * Understand unfamiliar topics clearly
+* Research one topic deeply with explanations, visuals, and practical guidance
 * Compare multiple options intelligently
 * Explain relationships and tradeoffs
-* Recommend the best choice for different scenarios
+* Recommend the best approach, next steps, or best choice for different scenarios
 
 ---
 
@@ -28,9 +29,10 @@ The application is intended for **multiple types of users**, rather than a singl
 Users should be able to:
 
 * Define what they want to research
+* Choose whether they want a single-topic research report or a comparison report
 * Choose the report style
 * Select the desired technical depth
-* Specify comparison criteria
+* Specify evaluation criteria when useful
 * Preview the generated report
 * Download the report in multiple formats
 
@@ -59,12 +61,17 @@ Each report request should collect the following information:
 
 ## Required Inputs
 
-* Topics to compare
+* Report mode
+* One or more topics
 * Target audience
 * Report style
 * Technical depth level
-* Preferred comparison criteria
 * Output format
+
+## Conditionally Required Inputs
+
+* Preferred evaluation criteria for comparison reports
+* Research focus areas for single-topic reports, when the user wants to guide the explanation
 
 ## Optional Inputs
 
@@ -98,7 +105,26 @@ Large code listings should be avoided.
 
 # Standard Report Structure
 
-Every generated report should generally include:
+Generated reports should adapt their structure to the selected report mode.
+
+## Single-Topic Research Report Structure
+
+A single-topic report should generally include:
+
+1. Executive Summary
+2. Topic Overview
+3. Why the Topic Matters
+4. Key Concepts and Terminology
+5. Visual Explanation or Diagram
+6. Practical Use Cases
+7. Benefits, Risks, and Tradeoffs
+8. Recommended Approach or Best Practices
+9. Implementation Notes or Learning Path
+10. References or Cited Sources (when live research is used)
+
+## Comparison Report Structure
+
+A comparison report should generally include:
 
 1. Executive Summary
 2. Introduction
@@ -136,6 +162,7 @@ Report generation may combine:
 * AI-generated knowledge
 * Internal templates
 * Structured prompting
+* Visual explanation generation, such as diagrams or chart-ready sections
 * Live research with citations (when appropriate)
 
 ---
@@ -159,14 +186,15 @@ The project will be considered successful when users can:
 * Manage their own generated reports.
 * Create report requests by specifying:
 
-  * Topics
+  * Report mode
+  * Topic or topics
   * Audience
   * Report style
   * Technical depth
-  * Comparison criteria
+  * Research focus areas or comparison criteria
   * Output preferences
-* Generate structured recommendation reports using a real AI provider.
-* Receive reports that clearly explain unfamiliar topics and compare them using engineering and business criteria.
+* Generate structured research and recommendation reports using a real AI provider.
+* Receive reports that clearly explain unfamiliar topics, either as focused single-topic research or as comparisons using engineering and business criteria.
 * Preview generated reports within the application.
 * Download reports in Markdown, PDF, DOCX, and HTML formats.
 * Reopen previously generated reports stored in SQL Server.

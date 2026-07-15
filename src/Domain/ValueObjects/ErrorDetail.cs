@@ -30,9 +30,11 @@ namespace Domain.ValueObjects
             var trimmedMessage = errorMessage.Trim();
             if (trimmedMessage.Length > MaxMessageLength)
             {
-                throw new ArgumentOutOfRangeException(
+                throw new ArgumentOutOfRangeException
+                (
                     nameof(errorMessage),
-                    $"Error message cannot exceed {MaxMessageLength} characters.");
+                    $"Error message cannot exceed {MaxMessageLength} characters."
+                );
             }
 
             return new ErrorDetail(errorCode.Trim(), trimmedMessage);
@@ -44,6 +46,7 @@ namespace Domain.ValueObjects
             yield return ErrorMessage;
         }
 
-        public override string ToString() => $"{ErrorCode}: {ErrorMessage}";
+        public override string ToString()
+            => $"{ErrorCode}: {ErrorMessage}";
     }
 }

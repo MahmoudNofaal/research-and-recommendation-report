@@ -5,10 +5,13 @@ namespace Domain.ValueObjects
     /// </summary>
     public readonly record struct ReportRecommendationId(Guid Value)
     {
-        public static ReportRecommendationId New() => new(Guid.NewGuid());
+        public static ReportRecommendationId New()
+            => new(Guid.NewGuid());
 
-        public static ReportRecommendationId From(Guid value) => new(value);
+        public static ReportRecommendationId From(Guid value)
+            => new(value);
 
-        public override string ToString() => Value.ToString();
+        public override string ToString()
+            => Value.ToString();
     }
 }

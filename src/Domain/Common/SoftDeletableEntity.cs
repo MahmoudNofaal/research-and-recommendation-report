@@ -29,10 +29,14 @@ namespace Domain.Common
         {
             if (IsDeleted)
             {
-                throw new InvalidReportStateException(
-                    new DomainError(
+                throw new InvalidReportStateException
+                (
+                    new DomainError
+                    (
                         "Entity.AlreadyDeleted",
-                        $"{GetType().Name} with id '{Id}' has already been deleted."));
+                        $"{GetType().Name} with id '{Id}' has already been deleted."
+                    )
+                );
             }
 
             DeletedAtUtc = deletedAtUtc;

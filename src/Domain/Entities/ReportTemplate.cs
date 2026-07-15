@@ -18,13 +18,14 @@ namespace Domain.Entities
         public const int MaxNameLength = 150;
         public const int MaxDescriptionLength = 500;
 
-        private ReportTemplate(
+        private ReportTemplate
+        (
             ReportTemplateId id,
             string name,
             string? description,
             SystemPromptText systemPrompt,
-            UserPromptTemplateText userPromptTemplate)
-            : base(id)
+            UserPromptTemplateText userPromptTemplate
+        ) : base(id)
         {
             Name = name;
             Description = description;
@@ -52,24 +53,34 @@ namespace Domain.Entities
 
         public bool IsActive { get; private set; }
 
-        public static ReportTemplate Create(
+        public static ReportTemplate Create
+        (
             string name,
             string? description,
             SystemPromptText systemPrompt,
-            UserPromptTemplateText userPromptTemplate)
+            UserPromptTemplateText userPromptTemplate
+        )
         {
             ArgumentNullException.ThrowIfNull(systemPrompt);
             ArgumentNullException.ThrowIfNull(userPromptTemplate);
 
-            return new ReportTemplate(
-                ReportTemplateId.New(), NormalizeName(name), NormalizeDescription(description), systemPrompt, userPromptTemplate);
+            return new ReportTemplate
+            (
+                ReportTemplateId.New(),
+                NormalizeName(name),
+                NormalizeDescription(description),
+                systemPrompt,
+                userPromptTemplate
+            );
         }
 
-        public void UpdateContent(
+        public void UpdateContent
+        (
             string name,
             string? description,
             SystemPromptText systemPrompt,
-            UserPromptTemplateText userPromptTemplate)
+            UserPromptTemplateText userPromptTemplate
+        )
         {
             ArgumentNullException.ThrowIfNull(systemPrompt);
             ArgumentNullException.ThrowIfNull(userPromptTemplate);
@@ -107,7 +118,11 @@ namespace Domain.Entities
             var trimmed = name.Trim();
             if (trimmed.Length > MaxNameLength)
             {
-                throw new ArgumentOutOfRangeException(nameof(name), $"Template name cannot exceed {MaxNameLength} characters.");
+                throw new ArgumentOutOfRangeException
+                (
+                    nameof(name),
+                    $"Template name cannot exceed {MaxNameLength} characters."
+                );
             }
 
             return trimmed;
@@ -123,7 +138,11 @@ namespace Domain.Entities
             var trimmed = description.Trim();
             if (trimmed.Length > MaxDescriptionLength)
             {
-                throw new ArgumentOutOfRangeException(nameof(description), $"Template description cannot exceed {MaxDescriptionLength} characters.");
+                throw new ArgumentOutOfRangeException
+                (
+                    nameof(description),
+                    $"Template description cannot exceed {MaxDescriptionLength} characters."
+                );
             }
 
             return trimmed;

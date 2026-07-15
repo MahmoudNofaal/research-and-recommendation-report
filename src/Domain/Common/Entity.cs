@@ -16,7 +16,8 @@ namespace Domain.Common
 
         public TId Id { get; }
 
-        public override bool Equals(object? obj) => Equals(obj as Entity<TId>);
+        public override bool Equals(object? obj)
+            => Equals(obj as Entity<TId>);
 
         public bool Equals(Entity<TId>? other)
         {
@@ -38,11 +39,13 @@ namespace Domain.Common
             return Id.Equals(other.Id);
         }
 
-        public override int GetHashCode() => HashCode.Combine(GetType(), Id);
+        public override int GetHashCode()
+            => HashCode.Combine(GetType(), Id);
 
-        public static bool operator ==(Entity<TId>? left, Entity<TId>? right) =>
-            left is null ? right is null : left.Equals(right);
+        public static bool operator ==(Entity<TId>? left, Entity<TId>? right)
+            => left is null ? right is null : left.Equals(right);
 
-        public static bool operator !=(Entity<TId>? left, Entity<TId>? right) => !(left == right);
+        public static bool operator !=(Entity<TId>? left, Entity<TId>? right)
+            => !(left == right);
     }
 }

@@ -16,14 +16,15 @@ namespace Domain.Entities
         public const int MaxRecommendedOptionLength = 200;
         public const int MaxReasoningLength = 1500;
 
-        private ReportRecommendation(
+        private ReportRecommendation
+        (
             ReportRecommendationId id,
             string scenario,
             string recommendedOption,
             string reasoning,
             RecommendationStrength strength,
-            int sortOrder)
-            : base(id)
+            int sortOrder
+        ) : base(id)
         {
             Scenario = scenario;
             RecommendedOption = recommendedOption;
@@ -57,12 +58,14 @@ namespace Domain.Entities
 
         public int SortOrder { get; private set; }
 
-        internal static ReportRecommendation Create(
+        internal static ReportRecommendation Create
+        (
             string scenario,
             string recommendedOption,
             string reasoning,
             RecommendationStrength strength,
-            int sortOrder)
+            int sortOrder
+        )
         {
             ArgumentException.ThrowIfNullOrWhiteSpace(scenario);
             ArgumentException.ThrowIfNullOrWhiteSpace(recommendedOption);
@@ -71,25 +74,45 @@ namespace Domain.Entities
             var trimmedScenario = scenario.Trim();
             if (trimmedScenario.Length > MaxScenarioLength)
             {
-                throw new ArgumentOutOfRangeException(nameof(scenario), $"Scenario cannot exceed {MaxScenarioLength} characters.");
+                throw new ArgumentOutOfRangeException
+                (
+                    nameof(scenario),
+                    $"Scenario cannot exceed {MaxScenarioLength} characters."
+                );
             }
 
             var trimmedOption = recommendedOption.Trim();
             if (trimmedOption.Length > MaxRecommendedOptionLength)
             {
-                throw new ArgumentOutOfRangeException(nameof(recommendedOption), $"Recommended option cannot exceed {MaxRecommendedOptionLength} characters.");
+                throw new ArgumentOutOfRangeException
+                (
+                    nameof(recommendedOption),
+                    $"Recommended option cannot exceed {MaxRecommendedOptionLength} characters."
+                );
             }
 
             var trimmedReasoning = reasoning.Trim();
             if (trimmedReasoning.Length > MaxReasoningLength)
             {
-                throw new ArgumentOutOfRangeException(nameof(reasoning), $"Reasoning cannot exceed {MaxReasoningLength} characters.");
+                throw new ArgumentOutOfRangeException
+                (
+                    nameof(reasoning),
+                    $"Reasoning cannot exceed {MaxReasoningLength} characters."
+                );
             }
 
-            return new ReportRecommendation(
-                ReportRecommendationId.New(), trimmedScenario, trimmedOption, trimmedReasoning, strength, sortOrder);
+            return new ReportRecommendation
+            (
+                ReportRecommendationId.New(),
+                trimmedScenario,
+                trimmedOption,
+                trimmedReasoning,
+                strength,
+                sortOrder
+            );
         }
 
-        internal void UpdateSortOrder(int sortOrder) => SortOrder = sortOrder;
+        internal void UpdateSortOrder(int sortOrder)
+            => SortOrder = sortOrder;
     }
 }

@@ -22,10 +22,13 @@ namespace Domain.Common
         /// Infrastructure is responsible for publishing and clearing these after a
         /// successful commit; the aggregate itself never dispatches its own events.
         /// </summary>
-        public IReadOnlyCollection<IDomainEvent> DomainEvents => _domainEvents.AsReadOnly();
+        public IReadOnlyCollection<IDomainEvent> DomainEvents
+            => _domainEvents.AsReadOnly();
 
-        protected void RaiseDomainEvent(IDomainEvent domainEvent) => _domainEvents.Add(domainEvent);
+        protected void RaiseDomainEvent(IDomainEvent domainEvent)
+            => _domainEvents.Add(domainEvent);
 
-        public void ClearDomainEvents() => _domainEvents.Clear();
+        public void ClearDomainEvents()
+            => _domainEvents.Clear();
     }
 }

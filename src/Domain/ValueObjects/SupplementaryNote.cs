@@ -29,9 +29,11 @@ namespace Domain.ValueObjects
             var trimmed = value.Trim();
             if (trimmed.Length > MaxLength)
             {
-                throw new ArgumentOutOfRangeException(
+                throw new ArgumentOutOfRangeException
+                (
                     nameof(value),
-                    $"Supplementary note cannot exceed {MaxLength} characters.");
+                    $"Supplementary note cannot exceed {MaxLength} characters."
+                );
             }
 
             return new SupplementaryNote(trimmed);

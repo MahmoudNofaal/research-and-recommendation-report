@@ -36,7 +36,8 @@ namespace Domain.Entities
         private readonly List<ReportCitation> _citations = [];
         private readonly List<ReportRecommendation> _recommendations = [];
 
-        private GeneratedReport(
+        private GeneratedReport
+        (
             GeneratedReportId id,
             ReportRequestId reportRequestId,
             UserId userId,
@@ -45,8 +46,8 @@ namespace Domain.Entities
             AiProviderType aiProvider,
             string modelName,
             PromptVersion promptVersion,
-            DateTime generatedAtUtc)
-            : base(id)
+            DateTime generatedAtUtc
+        ) : base(id)
         {
             ReportRequestId = reportRequestId;
             UserId = userId;
@@ -107,11 +108,14 @@ namespace Domain.Entities
 
         public bool IsDeleted => DeletedAtUtc is not null;
 
-        public IReadOnlyList<ReportCitation> Citations => _citations.AsReadOnly();
+        public IReadOnlyList<ReportCitation> Citations
+            => _citations.AsReadOnly();
 
-        public IReadOnlyList<ReportRecommendation> Recommendations => _recommendations.AsReadOnly();
+        public IReadOnlyList<ReportRecommendation> Recommendations
+            => _recommendations.AsReadOnly();
 
-        public static GeneratedReport Create(
+        public static GeneratedReport Create
+        (
             GeneratedReportId id,
             ReportRequestId reportRequestId,
             UserId userId,
@@ -120,7 +124,8 @@ namespace Domain.Entities
             AiProviderType aiProvider,
             string modelName,
             PromptVersion promptVersion,
-            DateTime generatedAtUtc)
+            DateTime generatedAtUtc
+        )
         {
             ArgumentNullException.ThrowIfNull(title);
             EnsureSubstantiveContent(content);
@@ -128,33 +133,69 @@ namespace Domain.Entities
 
             var trimmedModelName = NormalizeModelName(modelName);
 
-            return new GeneratedReport(
-                id, reportRequestId, userId, title, content, aiProvider, trimmedModelName, promptVersion, generatedAtUtc);
+            return new GeneratedReport
+            (
+                id,
+                reportRequestId,
+                userId,
+                title,
+                content,
+                aiProvider,
+                trimmedModelName,
+                promptVersion,
+                generatedAtUtc
+            );
         }
 
-        public ReportRecommendation AddRecommendation(
-            string scenario, string recommendedOption, string reasoning, RecommendationStrength strength)
+        public ReportRecommendation AddRecommendation
+        (
+            string scenario,
+            string recommendedOption,
+            string reasoning,
+            RecommendationStrength strength
+       )
         {
             EnsureNotDeleted();
 
-            var recommendation = ReportRecommendation.Create(
-                scenario, recommendedOption, reasoning, strength, _recommendations.Count);
+            var recommendation = ReportRecommendation.Create
+            (
+                scenario,
+                recommendedOption,
+                reasoning,
+                strength,
+                _recommendations.Count
+            );
+
             _recommendations.Add(recommendation);
+
             return recommendation;
         }
 
-        public ReportCitation AddCitation(
+        public ReportCitation AddCitation
+        (
             string title,
             SourceUrl url,
             string sourceName,
             DateTime? publishedAtUtc,
             DateTime accessedAtUtc,
-            string? notes = null)
+            string? notes = null
+        )
         {
             EnsureNotDeleted();
 
-            var citation = ReportCitation.Create(title, url, sourceName, publishedAtUtc, accessedAtUtc, notes, _citations.Count);
+            var citation = ReportCitation.Create
+            (
+                title,
+                url,
+                sourceName,
+                publishedAtUtc,
+                accessedAtUtc,
+                notes,
+                _citations.Count
+            );
+
             _citations.Add(citation);
+
             return citation;
         }
 
@@ -164,7 +205,11 @@ namespace Domain.Entities
         /// <see cref="Status"/>, and raises <see cref="ReportGeneratedDomainEvent"/>.
         /// Called once after generation and once after every regeneration.
         /// </summary>
-        public void CompleteGeneration(ReportQualityScore qualityScore, IReadOnlyCollection<QualityWarning> qualityWarnings)
+        public void CompleteGeneration
+        (
+            ReportQualityScore qualityScore,
+            IReadOnlyCollection<QualityWarning> qualityWarnings
+        )
         {
             EnsureNotDeleted();
             ArgumentNullException.ThrowIfNull(qualityScore);
@@ -190,13 +235,15 @@ namespace Domain.Entities
         /// with <see cref="CompleteGeneration"/>, exactly as during the first
         /// generation.
         /// </summary>
-        public void Regenerate(
+        public void Regenerate
+        (
             ReportTitle title,
             ReportContent content,
             AiProviderType aiProvider,
             string modelName,
             PromptVersion promptVersion,
-            DateTime generatedAtUtc)
+            DateTime generatedAtUtc
+        )
         {
             EnsureNotDeleted();
             ArgumentNullException.ThrowIfNull(title);
@@ -246,8 +293,10 @@ namespace Domain.Entities
 
             if (!content.IsSubstantive)
             {
-                throw new InvalidReportStateException(
-                    ReportDomainError.GeneratedReport.ContentTooShort(ReportContent.MinimumSubstantiveMarkdownLength));
+                throw new InvalidReportStateException
+                (
+                    ReportDomainError.GeneratedReport.ContentTooShort(ReportContent.MinimumSubstantiveMarkdownLength)
+                );
             }
         }
 
@@ -266,14 +315,18 @@ namespace Domain.Entities
             var trimmed = modelName.Trim();
             if (trimmed.Length > MaxModelNameLength)
             {
-                throw new ArgumentOutOfRangeException(nameof(modelName), $"Model name cannot exceed {MaxModelNameLength} characters.");
+                throw new ArgumentOutOfRangeException
+                (
+                    nameof(modelName),
+                    $"Model name cannot exceed {MaxModelNameLength} characters."
+                );
             }
 
             return trimmed;
         }
 
-        private static ReportStatus ComputeStatus(ReportQualityScore score, IReadOnlyCollection<QualityWarning> warnings) =>
-            warnings.Any(w => w.Severity == QualityWarningSeverity.Blocking) || !score.MeetsReadyThreshold
+        private static ReportStatus ComputeStatus(ReportQualityScore score, IReadOnlyCollection<QualityWarning> warnings)
+            => warnings.Any(w => w.Severity == QualityWarningSeverity.Blocking) || !score.MeetsReadyThreshold
                 ? ReportStatus.Draft
                 : ReportStatus.Ready;
     }

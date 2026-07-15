@@ -18,15 +18,16 @@ namespace Domain.Entities
         public const int MaxNameLength = 150;
         public const int MaxDescriptionLength = 500;
 
-        private ReportStylePreset(
+        private ReportStylePreset
+        (
             ReportStylePresetId id,
             string name,
             string? description,
             TargetAudience recommendedAudience,
             ReportStyle defaultStyle,
             TechnicalDepth defaultDepth,
-            int sortOrder)
-            : base(id)
+            int sortOrder
+        ) : base(id)
         {
             Name = name;
             Description = description;
@@ -59,33 +60,39 @@ namespace Domain.Entities
 
         public int SortOrder { get; private set; }
 
-        public static ReportStylePreset Create(
+        public static ReportStylePreset Create
+        (
             string name,
             string? description,
             TargetAudience recommendedAudience,
             ReportStyle defaultStyle,
             TechnicalDepth defaultDepth,
-            int sortOrder)
+            int sortOrder
+        )
         {
             ArgumentNullException.ThrowIfNull(recommendedAudience);
 
-            return new ReportStylePreset(
+            return new ReportStylePreset
+            (
                 ReportStylePresetId.New(),
                 NormalizeName(name),
                 NormalizeDescription(description),
                 recommendedAudience,
                 defaultStyle,
                 defaultDepth,
-                sortOrder);
+                sortOrder
+            );
         }
 
-        public void UpdateDetails(
+        public void UpdateDetails
+        (
             string name,
             string? description,
             TargetAudience recommendedAudience,
             ReportStyle defaultStyle,
             TechnicalDepth defaultDepth,
-            int sortOrder)
+            int sortOrder
+        )
         {
             ArgumentNullException.ThrowIfNull(recommendedAudience);
 
@@ -108,7 +115,11 @@ namespace Domain.Entities
             var trimmed = name.Trim();
             if (trimmed.Length > MaxNameLength)
             {
-                throw new ArgumentOutOfRangeException(nameof(name), $"Style preset name cannot exceed {MaxNameLength} characters.");
+                throw new ArgumentOutOfRangeException
+                (
+                    nameof(name),
+                    $"Style preset name cannot exceed {MaxNameLength} characters."
+                );
             }
 
             return trimmed;
@@ -124,7 +135,11 @@ namespace Domain.Entities
             var trimmed = description.Trim();
             if (trimmed.Length > MaxDescriptionLength)
             {
-                throw new ArgumentOutOfRangeException(nameof(description), $"Style preset description cannot exceed {MaxDescriptionLength} characters.");
+                throw new ArgumentOutOfRangeException
+                (
+                    nameof(description),
+                    $"Style preset description cannot exceed {MaxDescriptionLength} characters."
+                );
             }
 
             return trimmed;

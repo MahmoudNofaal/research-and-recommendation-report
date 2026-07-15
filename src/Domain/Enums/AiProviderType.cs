@@ -56,7 +56,7 @@ namespace Domain.Enums
         /// resolved-away preference and must never appear as the recorded provider
         /// of a <c>ReportGenerationRun</c>.
         /// </summary>
-        public static bool IsConcreteProvider(this AiProviderType providerType) =>
-            providerType != AiProviderType.SystemDefault;
+        public static bool IsConcreteProvider(this AiProviderType providerType)
+            => providerType != AiProviderType.SystemDefault;
     }
 }

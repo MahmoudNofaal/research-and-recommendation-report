@@ -14,7 +14,8 @@ namespace Domain.Entities
         public const int MaxSourceNameLength = 200;
         public const int MaxNotesLength = 500;
 
-        private ReportCitation(
+        private ReportCitation
+        (
             ReportCitationId id,
             string title,
             SourceUrl url,
@@ -22,8 +23,8 @@ namespace Domain.Entities
             DateTime? publishedAtUtc,
             DateTime accessedAtUtc,
             string? notes,
-            int sortOrder)
-            : base(id)
+            int sortOrder
+        ) : base(id)
         {
             Title = title;
             Url = url;
@@ -57,14 +58,16 @@ namespace Domain.Entities
 
         public int SortOrder { get; private set; }
 
-        internal static ReportCitation Create(
+        internal static ReportCitation Create
+        (
             string title,
             SourceUrl url,
             string sourceName,
             DateTime? publishedAtUtc,
             DateTime accessedAtUtc,
             string? notes,
-            int sortOrder)
+            int sortOrder
+        )
         {
             ArgumentException.ThrowIfNullOrWhiteSpace(title);
             ArgumentNullException.ThrowIfNull(url);
@@ -73,13 +76,21 @@ namespace Domain.Entities
             var trimmedTitle = title.Trim();
             if (trimmedTitle.Length > MaxTitleLength)
             {
-                throw new ArgumentOutOfRangeException(nameof(title), $"Citation title cannot exceed {MaxTitleLength} characters.");
+                throw new ArgumentOutOfRangeException
+                (
+                    nameof(title),
+                    $"Citation title cannot exceed {MaxTitleLength} characters."
+                );
             }
 
             var trimmedSourceName = sourceName.Trim();
             if (trimmedSourceName.Length > MaxSourceNameLength)
             {
-                throw new ArgumentOutOfRangeException(nameof(sourceName), $"Citation source name cannot exceed {MaxSourceNameLength} characters.");
+                throw new ArgumentOutOfRangeException
+                (
+                    nameof(sourceName),
+                    $"Citation source name cannot exceed {MaxSourceNameLength} characters."
+                );
             }
 
             string? trimmedNotes = null;
@@ -88,14 +99,28 @@ namespace Domain.Entities
                 trimmedNotes = notes.Trim();
                 if (trimmedNotes.Length > MaxNotesLength)
                 {
-                    throw new ArgumentOutOfRangeException(nameof(notes), $"Citation notes cannot exceed {MaxNotesLength} characters.");
+                    throw new ArgumentOutOfRangeException
+                    (
+                        nameof(notes),
+                        $"Citation notes cannot exceed {MaxNotesLength} characters."
+                    );
                 }
             }
 
-            return new ReportCitation(
-                ReportCitationId.New(), trimmedTitle, url, trimmedSourceName, publishedAtUtc, accessedAtUtc, trimmedNotes, sortOrder);
+            return new ReportCitation
+            (
+                ReportCitationId.New(),
+                trimmedTitle,
+                url,
+                trimmedSourceName,
+                publishedAtUtc,
+                accessedAtUtc,
+                trimmedNotes,
+                sortOrder
+            );
         }
 
-        internal void UpdateSortOrder(int sortOrder) => SortOrder = sortOrder;
+        internal void UpdateSortOrder(int sortOrder)
+            => SortOrder = sortOrder;
     }
 }

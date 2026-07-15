@@ -23,7 +23,8 @@ namespace Domain.ValueObjects
             CompletedAtUtc = completedAtUtc;
         }
 
-        public static GenerationTiming Start(DateTime startedAtUtc) => new(startedAtUtc, completedAtUtc: null);
+        public static GenerationTiming Start(DateTime startedAtUtc)
+            => new(startedAtUtc, completedAtUtc: null);
 
         /// <summary>
         /// Returns a new <see cref="GenerationTiming"/> with the same start time
@@ -33,9 +34,11 @@ namespace Domain.ValueObjects
         {
             if (completedAtUtc < StartedAtUtc)
             {
-                throw new ArgumentOutOfRangeException(
+                throw new ArgumentOutOfRangeException
+                (
                     nameof(completedAtUtc),
-                    "Completion time cannot be earlier than the start time.");
+                    "Completion time cannot be earlier than the start time."
+                );
             }
 
             return new GenerationTiming(StartedAtUtc, completedAtUtc);

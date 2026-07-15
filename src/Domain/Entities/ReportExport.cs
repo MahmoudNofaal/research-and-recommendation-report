@@ -12,15 +12,16 @@ namespace Domain.Entities
     /// </summary>
     public sealed class ReportExport : AggregateRoot<ReportExportId>
     {
-        private ReportExport(
+        private ReportExport
+        (
             ReportExportId id,
             GeneratedReportId generatedReportId,
             UserId userId,
             ExportFormat format,
             ExportFileName fileName,
             ContentType contentType,
-            DateTime exportedAtUtc)
-            : base(id)
+            DateTime exportedAtUtc
+        ) : base(id)
         {
             GeneratedReportId = generatedReportId;
             UserId = userId;
@@ -50,25 +51,32 @@ namespace Domain.Entities
 
         public DateTime ExportedAtUtc { get; }
 
-        public static ReportExport Create(
+        public static ReportExport Create
+        (
             GeneratedReportId generatedReportId,
             UserId userId,
             ExportFormat format,
             ExportFileName fileName,
-            DateTime exportedAtUtc)
+            DateTime exportedAtUtc
+        )
         {
             ArgumentNullException.ThrowIfNull(fileName);
 
-            var export = new ReportExport(
+            var export = new ReportExport
+            (
                 ReportExportId.New(),
                 generatedReportId,
                 userId,
                 format,
                 fileName,
                 ContentType.ForFormat(format),
-                exportedAtUtc);
+                exportedAtUtc
+            );
 
-            export.RaiseDomainEvent(new ReportExportedDomainEvent(export.Id, generatedReportId, userId, format));
+            export.RaiseDomainEvent
+            (
+                new ReportExportedDomainEvent(export.Id, generatedReportId, userId, format)
+            );
 
             return export;
         }

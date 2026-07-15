@@ -29,9 +29,11 @@ namespace Domain.ValueObjects
         {
             if (value < MinValue || value > MaxValue)
             {
-                throw new ArgumentOutOfRangeException(
+                throw new ArgumentOutOfRangeException
+                (
                     nameof(value),
-                    $"Report quality score must be between {MinValue} and {MaxValue}.");
+                    $"Report quality score must be between {MinValue} and {MaxValue}."
+                );
             }
 
             return new ReportQualityScore(value);
@@ -44,6 +46,7 @@ namespace Domain.ValueObjects
             yield return Value;
         }
 
-        public override string ToString() => Value.ToString();
+        public override string ToString()
+            => Value.ToString();
     }
 }

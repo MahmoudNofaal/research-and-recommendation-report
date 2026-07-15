@@ -9,11 +9,13 @@ namespace Domain.Events
     /// </summary>
     public sealed class ReportExportedDomainEvent : DomainEvent
     {
-        public ReportExportedDomainEvent(
+        public ReportExportedDomainEvent
+        (
             ReportExportId reportExportId,
             GeneratedReportId generatedReportId,
             UserId userId,
-            ExportFormat format)
+            ExportFormat format
+        )
         {
             ReportExportId = reportExportId;
             GeneratedReportId = generatedReportId;

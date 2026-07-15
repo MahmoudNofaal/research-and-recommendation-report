@@ -11,11 +11,13 @@ namespace Domain.Events
     /// </summary>
     public sealed class ReportGenerationFailedDomainEvent : DomainEvent
     {
-        public ReportGenerationFailedDomainEvent(
+        public ReportGenerationFailedDomainEvent
+        (
             ReportGenerationRunId reportGenerationRunId,
             ReportRequestId reportRequestId,
             UserId userId,
-            ErrorDetail errorDetail)
+            ErrorDetail errorDetail
+        )
         {
             ReportGenerationRunId = reportGenerationRunId;
             ReportRequestId = reportRequestId;
