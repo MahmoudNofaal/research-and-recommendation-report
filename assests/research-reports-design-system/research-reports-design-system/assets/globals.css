@@ -1,0 +1,76 @@
+/* globals.css — base layer for Research and Recommendation Reports
+   Load AFTER Tailwind's base/components/utilities, or as its own @layer base block. */
+
+@font-face {
+  font-family: "Inter";
+  src: url("/fonts/Inter-Variable.woff2") format("woff2-variations");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+html, body {
+  height: 100%;
+  font-family: "Inter", ui-sans-serif, system-ui, sans-serif;
+}
+
+/* Outer page background: radial blue gradient + dot-grid overlay.
+   Apply this class to the outermost wrapper in _Layout.cshtml. */
+.app-background {
+  min-height: 100vh;
+  background-color: #0B1220;
+  background-image:
+    radial-gradient(1.5px 1.5px at center, rgba(255, 255, 255, 0.08) 1px, transparent 1px),
+    radial-gradient(120% 100% at 50% 0%, #2F62E8 0%, #1D3F91 45%, #0B1220 100%);
+  background-size: 24px 24px, 100% 100%;
+  background-repeat: repeat, no-repeat;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+/* The floating dark panel that holds the whole app UI */
+.app-panel {
+  width: 100%;
+  max-width: 1600px;
+  height: calc(100vh - 48px);
+  background-color: #12141C; /* surface-base */
+  border-radius: 24px; /* radius-xl */
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
+  overflow: hidden;
+  display: flex;
+}
+
+/* Visible focus ring across the app — never remove focus outlines without replacing them */
+:focus-visible {
+  outline: 2px solid #3B82F6;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Utility for card hover lift, respects reduced motion */
+.card-hover {
+  transition: border-color 150ms ease-out, transform 150ms ease-out;
+}
+.card-hover:hover {
+  border-color: #2C2F39; /* border-default */
+  transform: translateY(-1px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Line clamp helper (if not using a Tailwind plugin for it) */
+.line-clamp-1 {
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}

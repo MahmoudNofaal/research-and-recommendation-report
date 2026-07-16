@@ -1,0 +1,47 @@
+@* Views/Shared/Partials/_KanbanCard.cshtml
+   Usage: <partial name="Partials/_KanbanCard" model="reportCard" />
+   The outer wrapper's data-id is read by SortableJS on drop to know which card moved.
+*@
+@model ResearchReports.Web.ViewModels.ReportCardViewModel
+
+<div class="kanban-card card-hover bg-surface-card border border-border-subtle rounded-md p-4"
+     data-id="@Model.Id"
+     draggable="true">
+
+    <div class="flex items-center justify-between">
+        <div class="flex items-center gap-2">
+            @foreach (var badge in Model.Badges)
+            {
+                <partial name="Partials/_Badge" model="badge" />
+            }
+        </div>
+        <span class="text-tertiary text-caption">@Model.ReferenceCode</span>
+    </div>
+
+    <p class="text-body-md text-text-primary mt-3">@Model.Title</p>
+    <p class="text-body-sm text-text-tertiary mt-1 line-clamp-1">@Model.Description</p>
+</div>
+
+@* Corresponding C# view model:
+
+    public class ReportCardViewModel
+    {
+        public string Id { get; set; } = string.Empty;
+        public string ReferenceCode { get; set; } = string.Empty; // e.g. "RR-198"
+        public string Title { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
+        public IEnumerable<BadgeViewModel> Badges { get; set; } = Enumerable.Empty<BadgeViewModel>();
+    }
+
+   Drag persistence (wire up once in your board's JS, e.g. wwwroot/js/kanban.js):
+
+    new Sortable(columnEl, {
+        group: 'kanban-reports',
+        animation: 150,
+        onEnd: function (evt) {
+            htmx.ajax('POST', '/Reports/UpdateStatus', {
+                values: { reportId: evt.item.dataset.id, newStatus: evt.to.dataset.status }
+            });
+        }
+    });
+*@

@@ -1,8 +1,173 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    Layout = "_LandingLayout";
+    ViewData["Title"] = "Turn Research Into Decision-Ready Reports";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<section class="landing-hero">
+    <div class="landing-container">
+        <h1 class="landing-hero__headline">
+            Turn any research question into a <span class="landing-hero__accent">decision-ready report</span>
+        </h1>
+        <p class="landing-hero__subheadline">
+            Generate deep research reports or side-by-side comparisons with AI — scored for quality,
+            structured for stakeholders, and ready to export in seconds.
+        </p>
+        <div class="landing-hero__actions">
+            <a class="btn btn-primary btn-lg" href="/Identity/Account/Register">Get Started Free</a>
+            <a class="btn btn-secondary btn-lg" href="/Identity/Account/Login">Log In</a>
+        </div>
+    </div>
+</section>
+
+<section class="landing-features" aria-labelledby="features-heading">
+    <div class="landing-container landing-container--narrow">
+        <h2 id="features-heading" class="visually-hidden">Features</h2>
+        <div class="landing-features__grid">
+            <article class="landing-feature">
+                <div class="landing-feature__icon" aria-hidden="true">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="8" />
+                        <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                        <line x1="11" y1="8" x2="11" y2="14" />
+                        <line x1="8" y1="11" x2="14" y2="11" />
+                    </svg>
+                </div>
+                <h3 class="landing-feature__title">Research one topic deeply</h3>
+                <p class="landing-feature__desc">
+                    Explore a single subject with structured sections — key concepts, analysis,
+                    and clear takeaways tailored to your audience.
+                </p>
+            </article>
+
+            <article class="landing-feature">
+                <div class="landing-feature__icon" aria-hidden="true">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="3" width="7" height="7" />
+                        <rect x="14" y="3" width="7" height="7" />
+                        <rect x="14" y="14" width="7" height="7" />
+                        <rect x="3" y="14" width="7" height="7" />
+                    </svg>
+                </div>
+                <h3 class="landing-feature__title">Compare options side-by-side</h3>
+                <p class="landing-feature__desc">
+                    Evaluate 2–8 options against weighted criteria with comparison tables,
+                    decision matrices, and scenario-based recommendations.
+                </p>
+            </article>
+
+            <article class="landing-feature">
+                <div class="landing-feature__icon" aria-hidden="true">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                        <polyline points="7 10 12 15 17 10" />
+                        <line x1="12" y1="15" x2="12" y2="3" />
+                    </svg>
+                </div>
+                <h3 class="landing-feature__title">Export anywhere</h3>
+                <p class="landing-feature__desc">
+                    Download polished reports in the format your team needs — no copy-paste required.
+                </p>
+                <div class="landing-feature__formats" aria-label="Supported export formats">
+                    <span class="landing-format-chip">MD</span>
+                    <span class="landing-format-chip">HTML</span>
+                    <span class="landing-format-chip">PDF</span>
+                    <span class="landing-format-chip">DOCX</span>
+                </div>
+            </article>
+        </div>
+    </div>
+</section>
+
+<section class="landing-proof" aria-labelledby="proof-heading">
+    <div class="landing-container">
+        <header class="landing-proof__header">
+            <h2 id="proof-heading" class="landing-proof__title">Reports you can trust and share</h2>
+            <p class="landing-proof__subtitle">
+                Every report is scored for structural completeness, with quality warnings
+                and actionable recommendations built in.
+            </p>
+        </header>
+
+        <div class="landing-proof__card-wrapper">
+            <article class="landing-sample-card" aria-label="Sample comparison report preview">
+                <header class="landing-sample-card__header">
+                    <div class="landing-sample-card__title-group">
+                        <h3 class="landing-sample-card__title">SignalR vs gRPC vs WebSockets</h3>
+                        <div class="landing-sample-card__meta">
+                            <span class="landing-sample-card__tag">Comparison</span>
+                            <span class="landing-sample-card__tag">Balanced</span>
+                            <span class="landing-sample-card__tag">Advanced</span>
+                        </div>
+                    </div>
+                    <div class="landing-quality-badge" title="Quality score reflects structural completeness">
+                        <div class="landing-quality-badge__ring" aria-hidden="true">
+                            <svg viewBox="0 0 36 36">
+                                <circle cx="18" cy="18" r="15.5" fill="none" stroke="#E2E8F0" stroke-width="3" />
+                                <circle cx="18" cy="18" r="15.5" fill="none" stroke="#16A34A" stroke-width="3"
+                                        stroke-dasharray="82 100" stroke-linecap="round" />
+                                <line x1="18" y1="2.5" x2="18" y2="6" stroke="#D97706" stroke-width="1.5" transform="rotate(252 18 18)" />
+                            </svg>
+                            <span class="landing-quality-badge__score">82</span>
+                        </div>
+                        <span class="landing-quality-badge__label">Quality</span>
+                    </div>
+                </header>
+
+                <div class="landing-sample-card__body">
+                    <h4 class="landing-sample-card__section-title">Comparison Table</h4>
+                    <table class="landing-comparison-table">
+                        <thead>
+                            <tr>
+                                <th scope="col">Technology</th>
+                                <th scope="col">Latency</th>
+                                <th scope="col">Scalability</th>
+                                <th scope="col">Ease of Use</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>SignalR</td>
+                                <td class="score-high">9/10</td>
+                                <td class="score-high">8/10</td>
+                                <td class="score-high">9/10</td>
+                            </tr>
+                            <tr>
+                                <td>gRPC</td>
+                                <td class="score-high">10/10</td>
+                                <td class="score-high">9/10</td>
+                                <td class="score-mid">6/10</td>
+                            </tr>
+                            <tr>
+                                <td>WebSockets</td>
+                                <td class="score-high">9/10</td>
+                                <td class="score-mid">7/10</td>
+                                <td class="score-mid">5/10</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="landing-sample-card__recommendation">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#16A34A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                            <polyline points="22 4 12 14.01 9 11.01" />
+                        </svg>
+                        <p class="landing-sample-card__recommendation-text">
+                            <strong>Strongly Recommended:</strong> For small internal tools and browser-first apps,
+                            SignalR offers the best balance of developer experience and real-time performance.
+                        </p>
+                    </div>
+                </div>
+            </article>
+        </div>
+    </div>
+</section>
+
+<section class="landing-cta" aria-labelledby="cta-heading">
+    <div class="landing-container">
+        <h2 id="cta-heading" class="landing-cta__title">Ready to generate your first report?</h2>
+        <p class="landing-cta__subtitle">
+            Set up takes less than a minute. No credit card required.
+        </p>
+        <a class="btn btn-primary btn-lg" href="/Identity/Account/Register">Get Started Free</a>
+    </div>
+</section>

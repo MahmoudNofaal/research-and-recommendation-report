@@ -1,0 +1,31 @@
+@* Views/Shared/Partials/_AvatarStack.cshtml
+   Usage: <partial name="Partials/_AvatarStack" model='new AvatarStackViewModel {
+              AvatarUrls = new[] { "/img/u1.jpg", "/img/u2.jpg" }, OverflowCount = 5 } />
+*@
+@model ResearchReports.Web.ViewModels.AvatarStackViewModel
+
+<div class="flex items-center">
+    @foreach (var (url, index) in Model.AvatarUrls.Select((u, i) => (u, i)))
+    {
+        <img src="@url"
+             alt="Contributor avatar"
+             class="w-8 h-8 rounded-full border-2 border-surface-base object-cover @(index > 0 ? "-ml-2" : "")" />
+    }
+
+    @if (Model.OverflowCount > 0)
+    {
+        <div class="w-8 h-8 -ml-2 rounded-full border-2 border-surface-base bg-surface-raised
+                    text-text-secondary text-caption font-semibold flex items-center justify-center">
+            +@Model.OverflowCount
+        </div>
+    }
+</div>
+
+@* Corresponding C# view model:
+
+    public class AvatarStackViewModel
+    {
+        public IEnumerable<string> AvatarUrls { get; set; } = Enumerable.Empty<string>();
+        public int OverflowCount { get; set; }
+    }
+*@
