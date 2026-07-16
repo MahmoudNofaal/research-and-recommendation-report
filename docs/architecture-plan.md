@@ -10,6 +10,16 @@ Build a professional ASP.NET Core MVC application that allows authenticated user
 
 The application should feel like the foundation of a real product, not a small demo. It should demonstrate strong Clean Architecture, practical AI integration, thoughtful user flows, and disciplined separation between Domain, Application, Infrastructure, and Web layers.
 
+## Authentication Direction
+
+Version 1 supports both local account authentication and Google login:
+
+- ASP.NET Core Identity handles local email/password accounts, user IDs, roles, claims, and persisted login data.
+- Google login is implemented through ASP.NET Core external authentication.
+- Google client ID and client secret are configuration values and must never be committed to source control.
+- A user who signs in with Google is still represented by an `ApplicationUser`, so report ownership works the same way for local and Google-authenticated users.
+- Account linking may be added later; Version 1 only needs the standard external login flow.
+
 ## Architecture Style
 
 Use a Clean Architecture modular monolith.
@@ -548,6 +558,9 @@ research-and-recommendation-report/
           ReportTemplateSeeder.cs
           DevelopmentDataSeeder.cs
 
+      Authentication/
+        GoogleAuthenticationOptions.cs
+
       Reports/
         Repositories/
           EfReportReadRepository.cs
@@ -600,6 +613,8 @@ research-and-recommendation-report/
             Account/
               Login.cshtml
               Login.cshtml.cs
+              ExternalLogin.cshtml
+              ExternalLogin.cshtml.cs
               Register.cshtml
               Register.cshtml.cs
               Logout.cshtml
@@ -988,12 +1003,22 @@ Implemented by:
 5. User is signed in.
 6. App redirects to dashboard.
 
-### Flow 3: User Logs In
+### Flow 3: User Logs In With Email and Password
 
 1. User opens login page.
 2. User enters email and password.
 3. Identity validates credentials.
 4. App redirects to dashboard.
+
+### Flow 3A: User Logs In With Google
+
+1. User opens login page.
+2. User clicks `Continue with Google`.
+3. App redirects to Google's OAuth consent/sign-in flow.
+4. Google redirects back to the app's external login callback.
+5. Identity validates the external login information.
+6. If this Google login is new, the app creates an `ApplicationUser`.
+7. App signs the user in and redirects to dashboard.
 
 ### Flow 4: User Opens Dashboard
 
@@ -1343,12 +1368,14 @@ Rules:
 Required:
 
 - Authentication for dashboard, reports, generation, preview, export, regeneration, and delete.
+- Local Identity login and Google external login are both supported authentication paths.
 - Every report query must include current user ID.
 - Use cases enforce ownership through repository ports.
 - Controllers do not query the database for ownership.
 - Anti-forgery tokens on forms.
 - Server-side validation for commands.
 - API keys never committed.
+- Google OAuth client ID and client secret never committed.
 - Prompt logging disabled by default.
 - Soft delete for reports.
 
@@ -1433,16 +1460,42 @@ Rules:
 - `appsettings.Production.json` contains production behavior overrides, but no committed secrets.
 - API keys, production connection strings, and other secrets must come from user secrets, environment variables, or deployment secret storage.
 - Web `Program.cs` is the composition root and passes `builder.Configuration` into Application and Infrastructure registration.
-- Application owns strongly typed settings classes under `Application/Options`.
+- Application owns application-level settings classes under `Application/Options`.
+- Infrastructure owns adapter-specific settings classes, such as Google OAuth configuration.
 - Settings are registered with `IOptions<T>` and validated on startup.
 - Application and Infrastructure services consume `IOptions<T>` instead of reading raw configuration directly, except for infrastructure bootstrap concerns such as connection-string setup.
 
-Current strongly typed settings:
+Current application-level settings:
 
 - `AiOptions`
 - `AiProviderOptions`
 - `ReportGenerationOptions`
 - `ExportOptions`
+
+Current infrastructure-specific settings:
+
+- `GoogleAuthenticationOptions`
+
+Google authentication configuration shape:
+
+```json
+{
+  "Authentication": {
+    "Google": {
+      "ClientId": "",
+      "ClientSecret": "",
+      "CallbackPath": "/signin-google"
+    }
+  }
+}
+```
+
+Rules:
+
+- Development secrets can be stored with user secrets or environment variables.
+- Production secrets must be supplied by the hosting platform or secret manager.
+- The committed `appsettings.*.json` files may include empty placeholders, but never real Google credentials.
+- The callback URL registered in Google Cloud Console must match the app's configured callback path and deployed host.
 
 ## Dependency Injection
 
@@ -1467,6 +1520,7 @@ Infrastructure registration:
 
 - EF Core
 - Identity stores
+- Google external authentication
 - Repositories
 - AI providers
 - Export renderers
@@ -1496,6 +1550,7 @@ Application:
 
 Infrastructure:
 
+- `Microsoft.AspNetCore.Authentication.Google`
 - `Microsoft.EntityFrameworkCore.SqlServer`
 - `Microsoft.EntityFrameworkCore.Tools`
 - `Microsoft.AspNetCore.Identity.EntityFrameworkCore`
@@ -1549,10 +1604,12 @@ CurrentUserService must live in Web.
 ### Phase 2: Authentication and Persistence
 
 1. Add Identity.
-2. Add SQL Server.
-3. Add EF Core configurations.
-4. Add migrations.
-5. Add seed data.
+2. Add local email/password login and registration.
+3. Add Google login authentication.
+4. Add SQL Server.
+5. Add EF Core configurations.
+6. Add migrations.
+7. Add seed data.
 
 ### Phase 3: Report Flow With Fake AI
 
@@ -1603,7 +1660,8 @@ CurrentUserService must live in Web.
 Core features:
 
 - Register
-- Login
+- Login with email and password
+- Login with Google
 - Dashboard
 - Guided report creation wizard
 - Single-topic research reports
