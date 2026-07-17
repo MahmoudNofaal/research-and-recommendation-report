@@ -1,10 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Application.Common.Models;
+using MediatR;
 
 namespace Application.Common.Interfaces
 {
-    internal interface IQueryHandler
+    /// <summary>
+    /// Executes a single <see cref="IQuery{TResponse}"/>.
+    /// </summary>
+    public interface IQueryHandler<in TQuery, TResponse> : IRequestHandler<TQuery, Result<TResponse>>
+        where TQuery : IQuery<TResponse>
     {
     }
 }
