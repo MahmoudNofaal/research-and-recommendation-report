@@ -3,51 +3,53 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - ResearchReportGen</title>
+    <meta name="description" content="@(ViewData["MetaDescription"] ?? "AI-generated research reports that explain unfamiliar topics clearly, compare your options side by side, and recommend a next step — structured for decisions, not chat.")" />
+    <title>@ViewData["Title"] - Research Report Generator</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/css/landing.css" asp-append-version="true" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="~/css/app.css" asp-append-version="true" />
     @await RenderSectionAsync("Styles", required: false)
 </head>
-<body class="landing-page">
+<body class="landing-background">
     <a class="skip-link" href="#main-content">Skip to main content</a>
 
-    <header class="landing-header">
-        <div class="landing-header__inner">
-            <a class="landing-logo" asp-controller="Home" asp-action="Index">
-                <span class="landing-logo__icon" aria-hidden="true">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <header class="sticky top-0 z-50 border-b border-border-subtle/60 bg-surface-base/80 backdrop-blur-md">
+        <div class="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 sm:px-6">
+            <a class="flex items-center gap-3 no-underline" asp-controller="Home" asp-action="Index">
+                <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-accent-primary text-white" aria-hidden="true">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
                         <polyline points="14 2 14 8 20 8" />
                         <line x1="16" y1="13" x2="8" y2="13" />
                         <line x1="16" y1="17" x2="8" y2="17" />
-                        <polyline points="10 9 9 9 8 9" />
                     </svg>
                 </span>
-                <span class="landing-logo__text">ResearchReportGen</span>
+                <span class="text-body-md font-semibold tracking-tight text-text-primary">Research Report Generator</span>
             </a>
-            <nav class="landing-nav" aria-label="Account">
-                <a class="btn btn-secondary" href="/Identity/Account/Login">Log In</a>
-                <a class="btn btn-primary" href="/Identity/Account/Register">Get Started Free</a>
+            <nav class="flex items-center gap-3" aria-label="Account">
+                <a class="btn-secondary hidden min-h-[40px] px-4 sm:inline-flex" href="/Identity/Account/Login">Sign in</a>
+                <a class="btn-primary min-h-[40px] px-4" href="/Identity/Account/Register">Create your first report</a>
             </nav>
         </div>
     </header>
 
-    <main id="main-content" class="landing-main">
+    <main id="main-content">
         @RenderBody()
     </main>
 
-    <footer class="landing-footer">
-        <div class="landing-footer__inner">
-            <span>&copy; @DateTime.UtcNow.Year ResearchReportGen</span>
-            <div class="landing-footer__links">
-                <a asp-controller="Home" asp-action="Privacy">Privacy</a>
-            </div>
+    <footer class="border-t border-border-subtle bg-surface-base/60">
+        <div class="mx-auto flex max-w-6xl flex-col gap-4 px-4 py-8 sm:flex-row sm:items-center sm:justify-between sm:px-6">
+            <span class="text-body-sm text-text-tertiary">&copy; @DateTime.UtcNow.Year Research Report Generator</span>
+            <nav class="flex flex-wrap gap-6" aria-label="Footer">
+                <a class="text-body-sm text-text-secondary no-underline transition-colors duration-150 hover:text-text-primary focus-visible:ring-2 focus-visible:ring-accent-primary" href="/Identity/Account/Login">Sign in</a>
+                <a class="text-body-sm text-text-secondary no-underline transition-colors duration-150 hover:text-text-primary focus-visible:ring-2 focus-visible:ring-accent-primary" href="/Identity/Account/Register">Register</a>
+                <a class="text-body-sm text-text-secondary no-underline transition-colors duration-150 hover:text-text-primary focus-visible:ring-2 focus-visible:ring-accent-primary" asp-controller="Home" asp-action="Privacy">About &amp; privacy</a>
+            </nav>
         </div>
     </footer>
 
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.9/dist/cdn.min.js"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

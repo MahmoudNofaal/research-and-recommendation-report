@@ -1,0 +1,99 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply font-sans text-text-primary antialiased;
+  }
+
+  :focus-visible {
+    outline: 2px solid theme("colors.accent.primary");
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+}
+
+@layer components {
+  .landing-background {
+    min-height: 100vh;
+    background-color: theme("colors.bg-gradient-to");
+    background-image:
+      radial-gradient(1.5px 1.5px at center, rgba(255, 255, 255, 0.08) 1px, transparent 1px),
+      radial-gradient(120% 100% at 50% 0%, theme("colors.bg-gradient-from") 0%, theme("colors.bg-gradient-via") 45%, theme("colors.bg-gradient-to") 100%);
+    background-size: 24px 24px, 100% 100%;
+    background-repeat: repeat, no-repeat;
+  }
+
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 min-h-[44px] rounded-full bg-accent-primary px-6 py-2 text-body-sm font-semibold text-white transition-colors duration-150 hover:bg-accent-primary-hover focus-visible:ring-2 focus-visible:ring-accent-primary focus-visible:ring-offset-2 focus-visible:ring-offset-surface-base;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 min-h-[44px] rounded-full border border-border-subtle bg-surface-raised px-6 py-2 text-body-sm font-semibold text-text-secondary transition-colors duration-150 hover:bg-surface-raised-hover hover:text-text-primary focus-visible:ring-2 focus-visible:ring-accent-primary focus-visible:ring-offset-2 focus-visible:ring-offset-surface-base;
+  }
+
+  .btn-lg {
+    @apply min-h-[48px] px-8 text-body-md;
+  }
+
+  .skip-link {
+    @apply absolute -top-full left-4 z-[1000] rounded-sm bg-accent-primary px-4 py-2 font-semibold text-white no-underline transition-[top] duration-150;
+  }
+
+  .skip-link:focus {
+    @apply top-4;
+  }
+
+  /* Dashed connector line between "How it works" step circles — lg only */
+  .landing-steps-connector {
+    @apply relative;
+  }
+
+  @media (min-width: 1024px) {
+    .landing-steps-connector > li + li::before {
+      content: "";
+      position: absolute;
+      top: 16px; /* center of the 32px (h-8) circle */
+      right: 100%;
+      width: calc(100% - 48px); /* gap between circles, leaving room for the 32px circle + 8px breathing */
+      border-top: 2px dashed theme("colors.border.subtle");
+      pointer-events: none;
+    }
+  }
+
+  /* Subtle glow around the final CTA panel */
+  .landing-cta-glow {
+    box-shadow:
+      0 20px 60px rgba(0, 0, 0, 0.45),
+      0 0 80px -20px theme("colors.bg-gradient-from" / 25%);
+  }
+
+  /* Uniform hover style for "What's inside" table-of-contents items */
+  .landing-toc-item {
+    @apply flex items-center gap-3 rounded-sm px-3 py-2 transition-colors duration-150;
+  }
+
+  .landing-toc-item:hover {
+    @apply bg-surface-hero;
+  }
+}
+
+[x-cloak] {
+  display: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
