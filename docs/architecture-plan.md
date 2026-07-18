@@ -365,6 +365,9 @@ research-and-recommendation-report/
           IAiProviderHealthCheck.cs
         Auth/
           ICurrentUserService.cs
+          IIdentityService.cs
+          IExternalAuthenticationService.cs
+          IEmailSender.cs
         Data/
           IApplicationDbContext.cs
           IUnitOfWork.cs
@@ -408,8 +411,65 @@ research-and-recommendation-report/
         Dashboard/
           DashboardDto.cs
           DashboardMetricDto.cs
+        Auth/
+          AuthenticatedUserDto.cs
+          LoginResultDto.cs
+          ExternalLoginProviderDto.cs
+          AccountProfileDto.cs
 
       Features/
+        Authentication/
+          Register/
+            RegisterCommand.cs
+            RegisterCommandHandler.cs
+            RegisterCommandValidator.cs
+            RegisterResult.cs
+          Login/
+            LoginCommand.cs
+            LoginCommandHandler.cs
+            LoginCommandValidator.cs
+            LoginResult.cs
+          ExternalLogin/
+            GetExternalLoginProvidersQuery.cs
+            GetExternalLoginProvidersQueryHandler.cs
+            GetExternalLoginProvidersResult.cs
+            BeginExternalLoginCommand.cs
+            BeginExternalLoginCommandHandler.cs
+            ExternalLoginCallbackCommand.cs
+            ExternalLoginCallbackCommandHandler.cs
+          Logout/
+            LogoutCommand.cs
+            LogoutCommandHandler.cs
+            LogoutResult.cs
+          ForgotPassword/
+            ForgotPasswordCommand.cs
+            ForgotPasswordCommandHandler.cs
+            ForgotPasswordCommandValidator.cs
+            ForgotPasswordResult.cs
+          ResetPassword/
+            ResetPasswordCommand.cs
+            ResetPasswordCommandHandler.cs
+            ResetPasswordCommandValidator.cs
+            ResetPasswordResult.cs
+          ConfirmEmail/
+            ConfirmEmailCommand.cs
+            ConfirmEmailCommandHandler.cs
+            ConfirmEmailResult.cs
+          GetAccountProfile/
+            GetAccountProfileQuery.cs
+            GetAccountProfileQueryHandler.cs
+            GetAccountProfileResult.cs
+          UpdateAccountProfile/
+            UpdateAccountProfileCommand.cs
+            UpdateAccountProfileCommandHandler.cs
+            UpdateAccountProfileCommandValidator.cs
+            UpdateAccountProfileResult.cs
+          ChangePassword/
+            ChangePasswordCommand.cs
+            ChangePasswordCommandHandler.cs
+            ChangePasswordCommandValidator.cs
+            ChangePasswordResult.cs
+
         Dashboard/
           GetDashboard/
             GetDashboardQuery.cs
@@ -422,6 +482,23 @@ research-and-recommendation-report/
             CreateReportRequestCommandHandler.cs
             CreateReportRequestCommandValidator.cs
             CreateReportRequestResult.cs
+          GetReportInputOptions/
+            GetReportInputOptionsQuery.cs
+            GetReportInputOptionsQueryHandler.cs
+            GetReportInputOptionsResult.cs
+          GetReportRequest/
+            GetReportRequestQuery.cs
+            GetReportRequestQueryHandler.cs
+            GetReportRequestResult.cs
+          UpdateReportRequest/
+            UpdateReportRequestCommand.cs
+            UpdateReportRequestCommandHandler.cs
+            UpdateReportRequestCommandValidator.cs
+            UpdateReportRequestResult.cs
+          CancelReportGeneration/
+            CancelReportGenerationCommand.cs
+            CancelReportGenerationCommandHandler.cs
+            CancelReportGenerationResult.cs
           GenerateReport/
             GenerateReportCommand.cs
             GenerateReportCommandHandler.cs
@@ -453,6 +530,10 @@ research-and-recommendation-report/
             DeleteReportCommandHandler.cs
             DeleteReportCommandValidator.cs
             DeleteReportResult.cs
+          RestoreReport/
+            RestoreReportCommand.cs
+            RestoreReportCommandHandler.cs
+            RestoreReportResult.cs
 
         Exports/
           ExportReport/
@@ -560,6 +641,11 @@ research-and-recommendation-report/
 
       Authentication/
         GoogleAuthenticationOptions.cs
+        EmailOptions.cs
+        IdentityService.cs
+        ExternalAuthenticationService.cs
+        EmailSender.cs
+        IdentityErrorMapper.cs
 
       Reports/
         Repositories/
@@ -606,6 +692,7 @@ research-and-recommendation-report/
         ExportsController.cs
         PresetsController.cs
         AiProvidersController.cs
+        SettingsController.cs
 
       Areas/
         Identity/
@@ -617,6 +704,14 @@ research-and-recommendation-report/
               ExternalLogin.cshtml.cs
               Register.cshtml
               Register.cshtml.cs
+              ForgotPassword.cshtml
+              ForgotPassword.cshtml.cs
+              ForgotPasswordConfirmation.cshtml
+              ForgotPasswordConfirmation.cshtml.cs
+              ResetPassword.cshtml
+              ResetPassword.cshtml.cs
+              ConfirmEmail.cshtml
+              ConfirmEmail.cshtml.cs
               Logout.cshtml
               Logout.cshtml.cs
               AccessDenied.cshtml
@@ -624,6 +719,10 @@ research-and-recommendation-report/
               Manage/
                 Index.cshtml
                 Index.cshtml.cs
+                ChangePassword.cshtml
+                ChangePassword.cshtml.cs
+                ExternalLogins.cshtml
+                ExternalLogins.cshtml.cs
 
       Adapters/
         CurrentUserService.cs
@@ -670,6 +769,12 @@ research-and-recommendation-report/
           CriteriaPresetViewModel.cs
           StylePresetViewModel.cs
           StyleSuggestionViewModel.cs
+        Account/
+          AccountProfileViewModel.cs
+          ChangePasswordViewModel.cs
+          ExternalLoginViewModel.cs
+        Settings/
+          SettingsViewModel.cs
         Shared/
           SelectOptionViewModel.cs
           ErrorViewModel.cs
@@ -679,6 +784,8 @@ research-and-recommendation-report/
           Index.cshtml
           Privacy.cshtml
         Dashboard/
+          Index.cshtml
+        Settings/
           Index.cshtml
         Reports/
           Index.cshtml
@@ -740,12 +847,24 @@ research-and-recommendation-report/
     ResearchReportGenerator.ApplicationTests/
       ResearchReportGenerator.ApplicationTests.csproj
       Features/
+        Authentication/
+          RegisterCommandHandlerTests.cs
+          LoginCommandHandlerTests.cs
+          ExternalLoginCommandHandlerTests.cs
+          LogoutCommandHandlerTests.cs
+          PasswordRecoveryHandlerTests.cs
+          ConfirmEmailCommandHandlerTests.cs
+          AccountProfileHandlerTests.cs
         CreateReportRequestCommandHandlerTests.cs
         GenerateReportCommandHandlerTests.cs
         RegenerateReportCommandHandlerTests.cs
         ExportReportCommandHandlerTests.cs
         GetReportPreviewQueryHandlerTests.cs
         SearchReportsQueryHandlerTests.cs
+        GetReportInputOptionsQueryHandlerTests.cs
+        UpdateReportRequestCommandHandlerTests.cs
+        CancelReportGenerationCommandHandlerTests.cs
+        RestoreReportCommandHandlerTests.cs
       Policies/
         ReportPromptComposerTests.cs
         ReportQualityPolicyTests.cs
@@ -779,6 +898,9 @@ research-and-recommendation-report/
       TestWebApplicationFactory.cs
       Auth/
         AuthenticationFlowTests.cs
+        PasswordRecoveryFlowTests.cs
+        ExternalLoginFlowTests.cs
+        AccountManagementFlowTests.cs
       Reports/
         ReportCreationFlowTests.cs
         ReportOwnershipTests.cs
@@ -842,6 +964,15 @@ Responsibilities:
 
 ## Application Use Cases
 
+### Authentication and Account
+
+- `RegisterCommand`, `LoginCommand`, and `LogoutCommand`
+- `GetExternalLoginProvidersQuery`, `BeginExternalLoginCommand`, and `ExternalLoginCallbackCommand`
+- `ForgotPasswordCommand`, `ResetPasswordCommand`, and `ConfirmEmailCommand`
+- `GetAccountProfileQuery`, `UpdateAccountProfileCommand`, and `ChangePasswordCommand`
+
+These use cases are deliberately represented in Application even though ASP.NET Core Identity supplies the persistence mechanism. They keep validation, error mapping, return-url safety, and session behavior testable and prevent Razor PageModels from becoming a second business layer.
+
 ### Dashboard
 
 - `GetDashboardQuery`
@@ -852,6 +983,8 @@ Responsibilities:
 - `CreateReportRequestCommand`
 - Saves the user's structured report request.
 - Supports both single-topic research and multi-topic comparison modes.
+- `GetReportInputOptionsQuery` loads topics, criteria, styles, lengths, depths, and provider options for the wizard.
+- `GetReportRequestQuery` and `UpdateReportRequestCommand` support review/edit before generation.
 
 ### Report Generation
 
@@ -861,6 +994,7 @@ Responsibilities:
 - Saves generated report.
 - Saves generation run.
 - Calculates quality score.
+- `CancelReportGenerationCommand` records cancellation and prevents a late provider response from being published.
 
 ### Report Regeneration
 
@@ -884,6 +1018,7 @@ Responsibilities:
 
 - `DeleteReportCommand`
 - Soft deletes a user-owned report.
+- `RestoreReportCommand` is reserved for a future history/recycle-bin surface and keeps the soft-delete policy reversible.
 
 ### Export
 
@@ -902,6 +1037,44 @@ Responsibilities:
 
 - `GetAiProviderHealthQuery`
 - Displays provider availability and configuration state.
+
+## Feature-to-Structure Contract
+
+Every user-visible capability must have an Application feature. A feature is a vertical slice containing the request (`Command` or `Query`), handler, validator when input is accepted, and a result type. Web adapters may use different HTTP/page names, but they must dispatch the corresponding slice rather than implement the use case themselves.
+
+### Authentication and Account Features
+
+| Capability | Application slice | Web/Identity surface | Required behavior |
+|---|---|---|---|
+| Register | `RegisterCommand` | `Identity/Account/Register` | Create Identity user, validate password/email, sign in, return safe errors |
+| Login | `LoginCommand` | `Identity/Account/Login` | Password sign-in, lockout handling, return normalized failure |
+| Google login | `GetExternalLoginProvidersQuery`, `BeginExternalLoginCommand`, `ExternalLoginCallbackCommand` | `ExternalLogin` | Challenge provider, create/link user on callback, preserve return URL safely |
+| Logout | `LogoutCommand` | `Identity/Account/Logout` | Sign out and invalidate the session |
+| Forgot/reset password | `ForgotPasswordCommand`, `ResetPasswordCommand` | `ForgotPassword`, `ResetPassword` | Never disclose account existence; issue and consume one-time token |
+| Confirm email | `ConfirmEmailCommand` | `ConfirmEmail` | Validate user/token and mark email confirmed |
+| Profile | `GetAccountProfileQuery`, `UpdateAccountProfileCommand` | `Manage/Index` | Read/update display name and safe profile fields |
+| Change password | `ChangePasswordCommand` | `Manage/ChangePassword` | Verify current password and rotate credentials |
+| Access denied | Web-only presentation result | `AccessDenied` | No domain mutation; render authorization guidance |
+
+`IIdentityService` and `IExternalAuthenticationService` are Application ports. Their Identity/ASP.NET Core implementations live in Infrastructure; Identity Razor Pages are thin Web adapters that map page models to these features. `ICurrentUserService` remains the read-only current-session port used by authorization and ownership checks.
+
+### Report, Export, Preset, Dashboard, and AI Features
+
+| Capability | Application slice |
+|---|---|
+| Load wizard options | `GetReportInputOptionsQuery` |
+| Create a request | `CreateReportRequestCommand` |
+| Re-open/edit a request | `GetReportRequestQuery`, `UpdateReportRequestCommand` |
+| Generate/regenerate | `GenerateReportCommand`, `RegenerateReportCommand` |
+| Cancel an in-progress generation | `CancelReportGenerationCommand` |
+| Preview/details/history/search | `GetReportPreviewQuery`, `GetReportDetailsQuery`, `GetReportHistoryQuery`, `SearchReportsQuery` |
+| Delete/restore | `DeleteReportCommand`, `RestoreReportCommand` (restore is optional UI, but the policy is defined) |
+| Export | `ExportReportCommand` |
+| Presets and suggestions | `GetCriteriaPresetsQuery`, `GetStylePresetsQuery`, `GetStyleSuggestionsQuery` |
+| Dashboard | `GetDashboardQuery` |
+| Provider health | `GetAiProviderHealthQuery` |
+
+For each row, the handler enforces authentication and report ownership where applicable, returns a typed result, and has a focused application test. This list is the source of truth for controllers, Razor pages, DTOs, and integration tests; a new screen or workflow is not considered planned until its slice is listed here.
 
 ## Infrastructure Implementations
 
@@ -960,10 +1133,20 @@ Implemented by:
 
 - Report history.
 - Create report form.
+- Report input options and draft/review editing.
 - Report details.
 - Preview.
 - Regeneration.
+- Generation cancellation.
 - Delete confirmation.
+- Restore (when recycle-bin UI is enabled).
+
+`Identity` Razor Pages / `AccountController` adapter
+
+- Register, login, external-login challenge/callback, logout.
+- Forgot/reset password and email confirmation.
+- Profile, external-login management, and change password.
+- Pages dispatch Application authentication features and never call `UserManager`/`SignInManager` directly for business decisions.
 
 `ExportsController`
 
@@ -976,6 +1159,11 @@ Implemented by:
 `AiProvidersController`
 
 - Provider health/status display.
+
+`SettingsController`
+
+- Settings/account navigation shell.
+- Dispatches account profile and credential features; it does not persist settings directly.
 
 ### Web Adapter
 
@@ -1020,6 +1208,21 @@ Implemented by:
 6. If this Google login is new, the app creates an `ApplicationUser`.
 7. App signs the user in and redirects to dashboard.
 
+### Flow 3B: User Recovers or Manages an Account
+
+1. User requests password reset or email confirmation from the Identity surface.
+2. Application validates the request without revealing whether an email exists.
+3. Infrastructure sends a one-time, expiring token through the configured email adapter.
+4. User submits the token and new password (or confirms the email).
+5. User can view/update profile data, manage external logins, or change password from Manage Account.
+
+### Flow 3C: User Logs Out
+
+1. User submits the anti-forgery-protected logout form.
+2. Web dispatches `LogoutCommand`.
+3. Identity service clears the authentication cookie and server-side session state.
+4. App redirects to the landing page with no authenticated report access.
+
 ### Flow 4: User Opens Dashboard
 
 1. User opens `/dashboard`.
@@ -1043,6 +1246,8 @@ Implemented by:
    - Research focus areas or comparison criteria
    - Optional constraints
    - Review
+
+The wizard first loads `GetReportInputOptionsQuery`; if the user leaves and returns before generation, `GetReportRequestQuery` restores the draft and `UpdateReportRequestCommand` persists edits.
 
 ### Flow 6: User Gets Suggestions
 
@@ -1086,6 +1291,13 @@ Implemented by:
 4. Application returns failure result.
 5. Web displays friendly retry options.
 6. User can retry with same provider or switch provider.
+
+### Flow 9A: User Cancels Generation
+
+1. User submits cancel while generation is running.
+2. Web sends `CancelReportGenerationCommand` for the owned request.
+3. Handler marks the run cancelled and prevents a late provider response from becoming the current report.
+4. Web offers retry or edit-request actions.
 
 ### Flow 10: User Previews Report
 
@@ -1368,6 +1580,7 @@ Rules:
 Required:
 
 - Authentication for dashboard, reports, generation, preview, export, regeneration, and delete.
+- Authentication lifecycle features (register, login, external login, logout, recovery, confirmation, profile, and password change) must go through Application ports and handlers; Identity is an Infrastructure adapter.
 - Local Identity login and Google external login are both supported authentication paths.
 - Every report query must include current user ID.
 - Use cases enforce ownership through repository ports.
@@ -1586,6 +1799,7 @@ Web controllers must not reference Domain entities directly.
 Application handlers must not use EF Core namespaces.
 Application handlers must not use HttpClient.
 Application handlers must not use ASP.NET Core MVC types.
+- Authentication handlers must not depend on `UserManager`, `SignInManager`, or `HttpContext`; those belong behind Application ports.
 Export implementations must live in Infrastructure.
 AI provider implementations must live in Infrastructure.
 CurrentUserService must live in Web.
@@ -1662,8 +1876,13 @@ Core features:
 - Register
 - Login with email and password
 - Login with Google
+- Logout
+- Forgot/reset password
+- Email confirmation
+- Account profile and change password
 - Dashboard
 - Guided report creation wizard
+- Load and save report-request drafts
 - Single-topic research reports
 - Topic comparison
 - Audience selection
@@ -1672,12 +1891,14 @@ Core features:
 - Research focus or criteria selection
 - Optional constraints
 - AI generation
+- Cancel in-progress generation
 - Preview
 - Export
 - Report history
 - Search
 - Regeneration
 - Delete
+- Restore deleted reports when recycle-bin UI is enabled
 
 Impressive features:
 
@@ -1698,6 +1919,9 @@ Impressive features:
 ## Definition of Done
 
 The architecture is complete when:
+
+- Every user-visible capability is represented by an Application command/query slice and listed in the Feature-to-Structure Contract.
+- Authentication includes register, login, Google external login, logout, forgot/reset password, email confirmation, profile management, and change password, with focused handler and integration tests.
 
 - Domain has direct folders such as `Entities`, `Enums`, `ValueObjects`, `Events`, `Errors`, `Exceptions`, and `Services`.
 - Domain has no dependency on Application, Infrastructure, Web, EF Core, or ASP.NET Core.
