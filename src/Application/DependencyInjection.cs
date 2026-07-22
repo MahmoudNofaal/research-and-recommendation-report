@@ -22,6 +22,11 @@ namespace Application
                 ReportGenerationOptions.SectionName
             );
             services.AddValidatedOptions<ExportOptions>(configuration, ExportOptions.SectionName);
+            services.AddValidatedOptions<GoogleAuthenticationOptions>
+            (
+                configuration,
+                GoogleAuthenticationOptions.SectionName
+            );
 
             services.AddMediatRPipeline();
             services.AddValidatorsFromAssembly(typeof(DependencyInjection).Assembly);

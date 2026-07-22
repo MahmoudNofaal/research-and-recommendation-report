@@ -1,7 +1,11 @@
-﻿using Application.Abstractions.Data;
+using Application.Abstractions.Data;
+using Application.Options;
 using Infrastructure.Data;
+using Application.Abstractions.Auth;
+using Infrastructure.Authentication;
 using Infrastructure.Data.Identity;
 using Infrastructure.Data.Interceptors;
+using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -32,6 +36,7 @@ namespace Infrastructure
         {
             services.AddPersistence(configuration);
             services.AddIdentityServices();
+            services.AddAuthenticationServices(configuration);
 
             return services;
         }
@@ -96,14 +101,46 @@ namespace Infrastructure
 
                     options.User.RequireUniqueEmail = true;
 
-                    // No email sender is configured for version 1; requiring
-                    // confirmation here would lock every new user out of an
-                    // account they can never confirm. Revisit once
-                    // transactional email exists.
+                    // Email confirmation can be enabled after SMTP settings
+                    // are supplied through user secrets or deployment config.
                     options.SignIn.RequireConfirmedAccount = false;
                 })
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
+
+            return services;
+        }
+
+        private static IServiceCollection AddAuthenticationServices
+        (
+            this IServiceCollection services,
+            IConfiguration configuration
+        )
+        {
+            services.Configure<EmailOptions>(configuration.GetSection(EmailOptions.SectionName));
+            services.AddScoped<IIdentityService, IdentityService>();
+            services.AddScoped<IExternalAuthenticationService, ExternalAuthenticationService>();
+            services.AddScoped<IEmailSender, EmailSender>();
+
+            var googleSection = configuration.GetSection(GoogleAuthenticationOptions.SectionName);
+            var googleOptions = googleSection.Get<GoogleAuthenticationOptions>();
+
+            if (googleOptions is not null && googleOptions.Enabled)
+            {
+                services
+                    .AddAuthentication()
+                    .AddGoogle(GoogleDefaults.AuthenticationScheme, options =>
+                    {
+                        options.ClientId = googleOptions.ClientId;
+                        options.ClientSecret = googleOptions.ClientSecret;
+                        options.CallbackPath = googleOptions.CallbackPath;
+
+                        options.Scope.Add("email");
+                        options.Scope.Add("profile");
+
+                        options.SaveTokens = true;
+                    });
+            }
 
             return services;
         }

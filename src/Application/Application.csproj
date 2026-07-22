@@ -8,7 +8,16 @@
 
   <ItemGroup>
     <Folder Include="DTOs\" />
-    <Folder Include="Features\" />
+    <Folder Include="Features\Authentication\Login\" />
+    <Folder Include="Features\Authentication\ExternalLogin\" />
+    <Folder Include="Features\Authentication\Logout\" />
+    <Folder Include="Features\Authentication\ForgotPassword\" />
+    <Folder Include="Features\Authentication\ConfirmEmail\" />
+    <Folder Include="Features\Authentication\GetAccountProfile\" />
+    <Folder Include="Features\Authentication\ChangePassword\" />
+    <Folder Include="Features\Authentication\UpdateAccountProfile\" />
+    <Folder Include="Features\Authentication\ResetPassword\" />
+    <Folder Include="Features\Authentication\Register\" />
     <Folder Include="Mapping\" />
     <Folder Include="Options\" />
     <Folder Include="Policies\" />
